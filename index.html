@@ -1,0 +1,1892 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Lunaz</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Lunaz: manifest the life you want, talk through your day, and understand yourself through astrology, Human Design, numerology and dream readings.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one long night-to-sunrise sky; Lumi flies a looping path between sections while copy alternates sides. */
+:root {
+  --night: #0d0928;
+  --ink: #f7f2ff;
+  --ink-soft: rgba(236, 228, 255, 0.78);
+  --ink-faint: rgba(236, 228, 255, 0.56);
+  --lilac: #cbbcff;
+  --blush: #ffc6e3;
+  --lumi: #a6f1ff;
+  --gold: #ffd88a;
+  --deep: #241a5e;
+  --glass: rgba(44, 31, 104, 0.46);
+  --glass-hi: rgba(78, 60, 160, 0.42);
+  --rim: rgba(222, 208, 255, 0.2);
+  --rim-hi: rgba(222, 208, 255, 0.42);
+  --btn-ink: #261a5e;
+  --font-ui: "Quicksand", "Nunito", "Varela Round", system-ui, sans-serif;
+  --gutter-l: max(20px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(20px, env(safe-area-inset-right, 0px));
+  color-scheme: dark;
+}
+html { scroll-behavior: smooth; background: var(--night); }
+body {
+  background: var(--night); color: var(--ink);
+  font-family: var(--font-ui); font-size: 17px; font-weight: 500; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; overflow-x: clip;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--night); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+#sky { position: fixed; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
+.sky-fallback { position: fixed; inset: 0; z-index: 0; background:
+  radial-gradient(60% 40% at 50% 30%, rgba(166, 241, 255, .28), transparent 70%),
+  linear-gradient(180deg, #0d0928 0%, #241a58 55%, #5e4290 100%); }
+.has-webgl .sky-fallback { display: none; }
+
+/* ---------- header ---------- */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) var(--gutter-r) 0 var(--gutter-l);
+  pointer-events: none;
+}
+.nav-in {
+  max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 24px;
+  padding: 8px 8px 8px 18px; border-radius: 999px; pointer-events: auto;
+  background: rgba(28, 19, 74, 0.38); border: 1px solid var(--rim);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3);
+  transition: background .5s ease;
+}
+.nav.scrolled .nav-in { background: rgba(24, 16, 64, 0.62); }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; font-weight: 700; font-size: 22px; letter-spacing: -0.01em; }
+.brand-orb {
+  width: 26px; height: 26px; border-radius: 50%; position: relative; flex: none;
+  background: radial-gradient(circle at 40% 35%, #f2feff 0%, #a6f1ff 45%, #59c9f0 100%);
+  box-shadow: 0 0 16px 3px rgba(140, 230, 255, .55);
+}
+.brand-orb::before, .brand-orb::after { content: ""; position: absolute; top: 10px; width: 3.4px; height: 5px; border-radius: 50%; background: #120c35; }
+.brand-orb::before { left: 8px; } .brand-orb::after { right: 8px; }
+.nav-links { display: flex; gap: 4px; margin-left: auto; list-style: none; padding: 0; margin-block: 0; }
+.nav-links a { color: var(--ink-soft); text-decoration: none; font-size: 15px; font-weight: 600; padding: 8px 12px; border-radius: 999px; transition: color .3s, background .3s; }
+.nav-links a:hover { color: var(--ink); background: rgba(255,255,255,.07); }
+.nav .btn { padding: 10px 18px; font-size: 15px; }
+@media (max-width: 880px) { .nav-links { display: none; } .nav .btn { margin-left: auto; } }
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer;
+  font: inherit; font-weight: 700; font-size: 17px; border-radius: 999px; padding: 16px 28px; border: 0;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, background .35s ease;
+}
+.btn-glow { color: var(--btn-ink); background: linear-gradient(180deg, #ffffff, #e6dcff); box-shadow: 0 0 0 1px rgba(255,255,255,.6) inset, 0 10px 40px -8px rgba(190, 160, 255, .75), 0 0 60px -10px rgba(166, 241, 255, .6); }
+.btn-glow:hover { transform: translateY(-2px); box-shadow: 0 0 0 1px rgba(255,255,255,.8) inset, 0 16px 50px -8px rgba(200, 170, 255, .9), 0 0 80px -6px rgba(166, 241, 255, .8); }
+.btn-ghost { color: var(--ink); background: rgba(255,255,255,.06); box-shadow: 0 0 0 1px var(--rim-hi) inset; -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.btn-ghost:hover { background: rgba(255,255,255,.12); transform: translateY(-2px); }
+.btn:focus-visible, a:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--lumi); outline-offset: 3px; }
+
+/* ---------- sections ---------- */
+main { position: relative; z-index: 2; overflow-x: clip; }
+.sec { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; }
+.wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding-left: var(--gutter-l); padding-right: var(--gutter-r); padding-block: 16vh; box-sizing: border-box; }
+.col { max-width: 540px; display: grid; gap: 22px; min-width: 0; }
+.right .col { margin-left: auto; }
+.center .col { margin: 0 auto; text-align: center; justify-items: center; max-width: 820px; }
+
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--lumi); text-shadow: 0 1px 14px rgba(10, 5, 40, .9), 0 0 2px rgba(10, 5, 40, .6); display: inline-flex; gap: 10px; align-items: center; margin: 0; }
+.eyebrow::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--lumi); box-shadow: 0 0 12px 2px rgba(166,241,255,.8); }
+h1, h2, h3 { margin: 0; text-wrap: balance; font-weight: 700; letter-spacing: -0.02em; }
+h1 { font-size: clamp(44px, 7.2vw, 100px); line-height: 1.0; text-shadow: 0 4px 40px rgba(20, 10, 60, .45); }
+h2 { font-size: clamp(36px, 4.8vw, 66px); line-height: 1.04; text-shadow: 0 4px 34px rgba(20, 10, 60, .5); }
+h3 { font-size: 21px; line-height: 1.25; letter-spacing: -0.01em; }
+.dream {
+  background: linear-gradient(100deg, #ffe3f2 0%, #ffc6e3 35%, #c9f6ff 100%); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; }
+.lead { font-size: clamp(18px, 1.5vw, 20px); color: var(--ink-soft); margin: 0; max-width: 60ch; text-shadow: 0 2px 18px rgba(20,10,60,.55); }
+.center .lead { margin-inline: auto; }
+.ctas { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.center .ctas { justify-content: center; }
+.fine { font-size: 14px; color: var(--ink-faint); margin: 0; }
+
+/* hero */
+#home .wrap { padding-top: 54vh; padding-bottom: 12vh; }
+#home h1 { max-width: 13ch; }
+.hint { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--ink-faint); margin: 6px 0 0; }
+.hint b { color: var(--lumi); font-weight: 700; }
+.scroll-cue { position: absolute; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); transform: translateX(-50%); width: 24px; height: 38px; border-radius: 14px; border: 1.5px solid var(--rim-hi); }
+.scroll-cue::after { content: ""; position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: var(--ink); animation: cue 2.2s ease-in-out infinite; }
+@keyframes cue { 0% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(12px); opacity: 0; } 100% { opacity: 0; } }
+
+/* outcome list */
+.outcomes { list-style: none; padding: 0; margin: 4px 0 0; display: grid; gap: 12px; }
+.outcomes li { display: grid; grid-template-columns: 22px 1fr; gap: 12px; align-items: start; color: var(--ink-soft); }
+.outcomes li::before { content: ""; width: 14px; height: 14px; margin-top: 6px; justify-self: center;
+  background: var(--gold); clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0 50%, 39% 38%); filter: drop-shadow(0 0 6px rgba(255,216,138,.9)); }
+.outcomes b { color: var(--ink); font-weight: 700; }
+
+/* glass surfaces */
+.glass {
+  background: linear-gradient(180deg, rgba(70, 52, 150, .5), rgba(34, 24, 88, .5));
+  border: 1px solid var(--rim); border-radius: 26px;
+  -webkit-backdrop-filter: blur(18px) saturate(1.25); backdrop-filter: blur(18px) saturate(1.25);
+  box-shadow: 0 30px 80px -30px rgba(10, 4, 40, .6), inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+/* manifestation list */
+.mlist { padding: 22px; display: grid; gap: 6px; max-width: 420px; }
+.mlist-head { display: flex; justify-content: space-between; align-items: baseline; padding: 2px 6px 10px; }
+.mlist-head span { font-weight: 700; }
+.mlist-head small { color: var(--ink-faint); font-size: 13px; }
+.mitem { display: grid; grid-template-columns: 26px 1fr auto; gap: 12px; align-items: center; padding: 12px 10px; border-radius: 14px; transition: background .5s ease; }
+.mitem .box { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--rim-hi); display: grid; place-items: center; transition: all .5s cubic-bezier(.2,.8,.2,1); }
+.mitem .box::after { content: ""; width: 10px; height: 10px; background: var(--btn-ink); transform: scale(0); transition: transform .5s cubic-bezier(.3,1.6,.4,1);
+  clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0 50%, 39% 38%); }
+.mitem .tag { font-size: 12px; font-weight: 700; letter-spacing: .06em; color: var(--gold); opacity: 0; transform: translateX(-6px); transition: all .5s ease; }
+.mitem.done { background: rgba(255, 216, 138, .08); }
+.mitem.done .box { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 18px rgba(255, 216, 138, .7); }
+.mitem.done .box::after { transform: scale(1); }
+.mitem.done .tag { opacity: 1; transform: none; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.two > * { min-width: 0; }
+@media (max-width: 880px) { .two { grid-template-columns: 1fr; gap: 36px; } }
+
+/* vent chat */
+.chat { padding: 22px; display: grid; gap: 14px; max-width: 460px; }
+.chat-top { display: flex; align-items: center; gap: 10px; padding: 0 4px 6px; font-weight: 700; }
+.chat-top .brand-orb { width: 22px; height: 22px; }
+.chat-top .brand-orb::before, .chat-top .brand-orb::after { top: 8px; width: 3px; height: 4.4px; }
+.chat-top .brand-orb::before { left: 6.5px; } .chat-top .brand-orb::after { right: 6.5px; }
+.chat-top small { margin-left: auto; color: var(--ink-faint); font-weight: 600; font-size: 13px; }
+.bubbles { display: grid; gap: 10px; min-height: 196px; align-content: start; }
+.bubble { max-width: 86%; padding: 12px 16px; border-radius: 20px; font-size: 16px; line-height: 1.45; animation: pop .55s cubic-bezier(.2,.9,.3,1.2) both; }
+.bubble.you { justify-self: end; background: rgba(255,255,255,.1); border-bottom-right-radius: 6px; color: var(--ink); }
+.bubble.lumi { justify-self: start; background: linear-gradient(135deg, rgba(166,241,255,.24), rgba(203,188,255,.22)); border: 1px solid rgba(166,241,255,.3); border-bottom-left-radius: 6px; }
+.bubble.lumi .dream { font-weight: 700; }
+.typing { display: inline-flex; gap: 5px; padding: 16px 18px; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--lumi); opacity: .5; animation: dot 1s infinite ease-in-out; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes dot { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-4px); opacity: 1; } }
+@keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.96); } to { opacity: 1; transform: none; } }
+.thoughts { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font: inherit; font-size: 14px; font-weight: 600; color: var(--ink-soft); background: rgba(255,255,255,.05); border: 1px solid var(--rim); border-radius: 999px; padding: 8px 14px; cursor: pointer; transition: all .3s ease; }
+.chip:hover { color: var(--ink); border-color: var(--rim-hi); }
+.chip[aria-pressed="true"] { color: var(--btn-ink); background: var(--lilac); border-color: var(--lilac); }
+
+/* capability cards */
+.head { display: grid; gap: 18px; max-width: 720px; margin-bottom: 48px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+@media (max-width: 980px) { .grid3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .grid3, .grid2 { grid-template-columns: 1fr; } }
+.card { padding: 26px; display: grid; gap: 12px; align-content: start; transition: transform .5s cubic-bezier(.2,.8,.2,1), border-color .4s ease, background .4s ease; }
+.card:hover { transform: translateY(-4px); border-color: var(--rim-hi); }
+.card p { margin: 0; color: var(--ink-soft); font-size: 16px; }
+.ico { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: rgba(166,241,255,.1); border: 1px solid rgba(166,241,255,.22); color: var(--lumi); }
+.ico svg { width: 24px; height: 24px; }
+.card .num { font-weight: 700; font-size: 24px; letter-spacing: .02em; color: var(--gold); line-height: 1; }
+
+/* readings */
+.reading { padding: 28px; display: grid; gap: 12px; align-content: start; position: relative; overflow: hidden; }
+.reading .glyph { width: 74px; height: 74px; color: var(--lilac); }
+.reading .glyph.spin { animation: spin 60s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.reading p { margin: 0; color: var(--ink-soft); font-size: 16px; }
+.reading .gives { font-size: 14px; color: var(--lumi); font-weight: 700; }
+.extras { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 26px; }
+.extras span:first-child { color: var(--ink-faint); font-size: 15px; margin-right: 4px; }
+.pill { font-size: 14px; font-weight: 600; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--rim); background: rgba(255,255,255,.05); color: var(--ink-soft); }
+
+/* signs */
+.sign-box { padding: 24px; display: grid; gap: 16px; max-width: 460px; }
+.sign-out { min-height: 64px; font-weight: 600; font-size: 21px; line-height: 1.25; color: var(--ink); }
+.sign-out.flash { animation: pop .7s cubic-bezier(.2,.9,.3,1.2) both; }
+.sign-note { font-size: 13px; color: var(--ink-faint); margin: 0; }
+
+/* trust */
+.trust { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 22px; }
+.trust li { display: grid; gap: 4px; padding-left: 22px; border-left: 1px solid var(--rim-hi); }
+.trust b { font-size: 18px; }
+.trust span { color: var(--ink-soft); font-size: 16px; }
+
+/* pricing */
+.plans { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 18px; align-items: stretch; }
+@media (max-width: 820px) { .plans { grid-template-columns: 1fr; } }
+.plan { padding: 32px; display: grid; gap: 18px; align-content: start; }
+.plan.feature { background: linear-gradient(180deg, rgba(110, 86, 200, .55), rgba(46, 32, 110, .55)); border-color: rgba(222,208,255,.36); }
+.plan-name { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+.badge { font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; background: var(--gold); color: var(--btn-ink); }
+.price { display: flex; align-items: baseline; gap: 8px; font-variant-numeric: tabular-nums; }
+.price b { font-size: 58px; line-height: 1; letter-spacing: -0.03em; }
+.price span { color: var(--ink-faint); }
+.plan ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.plan li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; color: var(--ink-soft); font-size: 16px; }
+.plan li::before { content: ""; width: 10px; height: 10px; margin-top: 7px; border-radius: 50%; background: var(--lumi); box-shadow: 0 0 10px rgba(166,241,255,.8); }
+.tiers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 460px) { .tiers { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.tier { font: inherit; color: var(--ink); background: rgba(255,255,255,.05); border: 1px solid var(--rim); border-radius: 16px; padding: 12px 6px; cursor: pointer; display: grid; gap: 2px; justify-items: center; transition: all .3s ease; font-variant-numeric: tabular-nums; }
+.tier b { font-size: 18px; } .tier small { font-size: 12px; color: var(--ink-faint); min-height: 1.4em; }
+.tier[aria-pressed="true"] { background: rgba(255,255,255,.92); color: var(--btn-ink); border-color: #fff; }
+.tier[aria-pressed="true"] small { color: #6a4fb8; }
+.tier-note { font-size: 15px; color: var(--ink-soft); margin: 0; min-height: 1.6em; }
+.credits { margin-top: 22px; padding: 18px 22px; display: flex; flex-wrap: wrap; gap: 10px 28px; align-items: center; font-size: 15px; color: var(--ink-soft); border-radius: 18px; }
+.credits b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* faq */
+.faq { display: grid; gap: 10px; }
+.faq details { border-radius: 18px; padding: 0; transition: background .4s ease; }
+.faq summary { list-style: none; cursor: pointer; padding: 18px 22px; font-weight: 700; font-size: 17px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: ""; width: 10px; height: 10px; flex: none; border-right: 2px solid var(--lumi); border-bottom: 2px solid var(--lumi); transform: rotate(45deg) translateY(-3px); transition: transform .4s ease; }
+.faq details[open] summary::after { transform: rotate(-135deg) translateY(-3px); }
+.faq details p { margin: 0; padding: 0 22px 20px; color: var(--ink-soft); font-size: 16px; }
+
+/* final */
+#begin .wrap { padding-top: 50vh; padding-bottom: 0; }
+footer { margin-top: 18vh; padding: 28px 0 calc(env(safe-area-inset-bottom, 0px) + 28px); border-top: 1px solid var(--rim); display: grid; gap: 18px; grid-template-columns: auto 1fr auto; align-items: center; font-size: 14px; color: var(--ink-faint); text-align: left; }
+footer nav { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: center; }
+footer a { color: var(--ink-soft); text-decoration: none; }
+footer a:hover { color: var(--ink); }
+footer .disclaimer { grid-column: 1 / -1; margin: 0; max-width: 80ch; }
+@media (max-width: 720px) { footer { grid-template-columns: 1fr; } footer nav { justify-content: flex-start; } }
+
+/* progress rail */
+.rail { position: fixed; right: max(18px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); z-index: 15; display: grid; gap: 12px; }
+.rail a { position: relative; display: block; width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,.22); transition: all .4s ease; }
+.rail a.on { background: var(--lumi); box-shadow: 0 0 12px 2px rgba(166,241,255,.8); transform: scale(1.25); }
+.rail a span { position: absolute; right: 22px; top: 50%; transform: translateY(-50%) translateX(6px); white-space: nowrap; font-size: 13px; font-weight: 700; color: var(--ink); opacity: 0; pointer-events: none; transition: all .3s ease; background: rgba(28,19,74,.7); padding: 4px 10px; border-radius: 999px; }
+.rail a:hover span, .rail a:focus-visible span { opacity: 1; transform: translateY(-50%); }
+@media (max-width: 1100px) { .rail { display: none; } }
+
+/* reveal: content is readable at rest; motion only adds a settle */
+.rv { transition: transform 1.1s cubic-bezier(.2,.8,.2,1), opacity 1.1s ease, filter 1.1s ease; }
+.js .rv:not(.in) { transform: translateY(26px); opacity: .18; filter: blur(3px); }
+.js .rv.d1 { transition-delay: .08s; } .js .rv.d2 { transition-delay: .16s; } .js .rv.d3 { transition-delay: .24s; } .js .rv.d4 { transition-delay: .32s; }
+@media (prefers-reduced-motion: reduce) { .js .rv:not(.in) { transform: none; opacity: 1; filter: none; } .rv { transition: none; } }
+
+body.over-lumi { cursor: pointer; }
+
+/* a soft pool of night behind copy so it reads over bright clouds */
+.col, .head, .tour-intro, .step { position: relative; isolation: isolate; }
+.col::before, .head::before, .tour-intro::before, .step::before {
+  content: ""; position: absolute; z-index: -1; inset: -12% -18%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(24, 14, 70, .6), rgba(24, 14, 70, .34) 55%, transparent);
+  filter: blur(8px);
+}
+.center .col::before { inset: -8% -10%; }
+
+/* app download button */
+.btn-app { color: #fff; background: #0e0a24; box-shadow: 0 0 0 1px rgba(255,255,255,.28) inset, 0 12px 40px -10px rgba(10,4,40,.8); padding: 11px 24px 11px 18px; }
+.btn-app:hover { transform: translateY(-2px); background: #1a1340; }
+.btn-app svg { width: 24px; height: 24px; flex: none; }
+.btn-app .two-line { display: grid; line-height: 1.12; text-align: left; }
+.btn-app small { font-size: 11px; font-weight: 600; opacity: .75; letter-spacing: .02em; }
+.btn-app b { font-size: 17px; }
+
+/* ---------- app tour with a live phone ---------- */
+.tour { display: block; }
+.tour .wrap { padding-bottom: 4vh; }
+.tour-intro { display: grid; gap: 20px; max-width: 640px; }
+.tour-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; margin-top: 2vh; }
+.steps { display: grid; }
+.step { min-height: 88vh; display: grid; align-content: center; gap: 14px; max-width: 440px; opacity: .3; transition: opacity .6s ease; }
+.step.on { opacity: 1; }
+.step-k { font-size: 13px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin: 0; }
+.step h3 { font-size: clamp(28px, 3vw, 40px); line-height: 1.1; letter-spacing: -0.02em; }
+.step p { margin: 0; color: var(--ink-soft); font-size: 18px; }
+.phone-col { position: sticky; top: calc(50vh - 330px); align-self: start; display: grid; justify-items: center; gap: 18px; }
+.phone-box { position: relative; perspective: 1600px; width: 300px; height: 628px; }
+.phone-caption { display: none; }
+.phone-tilt { position: absolute; left: 0; top: 0; width: 300px; height: 628px; transform-origin: 50% 50%; transform-style: preserve-3d; }
+/* iPhone 17 in Lavender: aluminium frame, even thin bezels, Dynamic Island, Camera Control */
+.phone-depth { position: absolute; inset: 0; border-radius: 54px; background: linear-gradient(100deg, #6f5f9c, #b8a9de 30%, #8676b4 60%, #c9bde9); }
+.phone-depth.d1 { transform: translateZ(-3px); } .phone-depth.d2 { transform: translateZ(-6px); } .phone-depth.d3 { transform: translateZ(-9px); box-shadow: 0 60px 120px -30px rgba(3, 0, 20, .95), 0 24px 50px -18px rgba(3, 0, 20, .7); }
+.pb { position: absolute; width: 4px; border-radius: 2px; background: linear-gradient(90deg, #7c6ba8, #e9e1ff 45%, #a493cf); transform: translateZ(-4px); }
+.pb.action { left: -2.5px; top: 104px; height: 30px; }
+.pb.volup { left: -2.5px; top: 152px; height: 54px; }
+.pb.voldn { left: -2.5px; top: 216px; height: 54px; }
+.pb.side { right: -2.5px; top: 176px; height: 86px; }
+.pb.cam { right: -2px; top: 356px; height: 50px; width: 3px; background: linear-gradient(90deg, #3a3354, #8a80ad 50%, #3a3354); }
+.phone {
+  --p-ink: #241a54; --p-soft: #6c5aa8; --p-bg1: #f4f0ff; --p-bg2: #fbeef6; --p-card: rgba(255,255,255,.82);
+  position: absolute; inset: 0; border-radius: 54px; padding: 3.5px; box-sizing: border-box;
+  background: linear-gradient(135deg, #f6f1ff 0%, #c4b5e8 14%, #9584c4 38%, #b9aae0 62%, #efe9ff 84%, #a797d2 100%);
+  box-shadow: inset 0 0 0 .8px rgba(255,255,255,.7), inset 0 0 0 1.8px rgba(80, 60, 130, .35);
+  font-family: var(--font-ui); color: var(--p-ink);
+}
+.phone .bezel { position: absolute; inset: 3.5px; border-radius: 50.5px; background: #020104; padding: 8.5px; box-shadow: inset 0 0 0 1px #24203a, inset 0 0 6px rgba(0,0,0,.8); }
+.phone .scr { position: relative; width: 100%; height: 100%; border-radius: 42px; overflow: hidden; background: linear-gradient(180deg, var(--p-bg1), var(--p-bg2)); }
+.phone .scr::after { content: ""; position: absolute; inset: 0; z-index: 8; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(118deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,.06) 22%, rgba(255,255,255,0) 38%, rgba(255,255,255,0) 72%, rgba(255,255,255,.07) 100%); }
+.phone .island { position: absolute; top: 9px; left: 50%; width: 92px; height: 27px; margin-left: -46px; border-radius: 14px; background: #000; z-index: 7; }
+.phone .island::after { content: ""; position: absolute; right: 9px; top: 7px; width: 13px; height: 13px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #3a3f6a 0 18%, #12142a 40%, #050509 70%); }
+.phone .status { position: absolute; top: 0; left: 0; right: 0; height: 46px; display: flex; justify-content: space-between; align-items: center; padding: 3px 20px 0 32px; z-index: 6;
+  font: 600 15px/1 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", var(--font-ui); letter-spacing: -0.01em; }
+.phone .status .r { display: inline-flex; align-items: center; gap: 4px; }
+.phone .status svg { height: 10px; width: auto; }
+.phone .batt { position: relative; width: 22px; height: 11px; border-radius: 3.5px; border: 1px solid rgba(36, 26, 84, .45); box-sizing: border-box; padding: 1.5px; }
+.phone .batt i { display: block; height: 100%; width: 78%; border-radius: 2px; background: var(--p-ink); }
+.phone .batt::after { content: ""; position: absolute; right: -3px; top: 3px; width: 1.5px; height: 4px; border-radius: 0 1px 1px 0; background: rgba(36, 26, 84, .45); }
+.phone .screen { position: absolute; inset: 48px 0 92px; padding: 6px 18px 0; display: grid; align-content: start; gap: 11px;
+  opacity: 0; transform: translateX(24px) scale(.98); transition: opacity .5s ease, transform .7s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.phone .screen.on { opacity: 1; transform: none; }
+.phone .screen.past { transform: translateX(-24px) scale(.98); }
+.p-date { font-size: 12px; font-weight: 700; color: var(--p-soft); letter-spacing: .04em; margin: 0; }
+.p-h { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 0; line-height: 1.1; }
+.p-card { background: var(--p-card); border: 1px solid rgba(255,255,255,.9); border-radius: 20px; padding: 12px 14px; box-shadow: 0 8px 24px -14px rgba(60, 30, 140, .35); font-size: 12.5px; line-height: 1.42; }
+.p-label { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--p-soft); margin: 0 0 4px; }
+.p-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.p-mini { background: var(--p-card); border-radius: 16px; padding: 9px 6px; text-align: center; font-size: 10.5px; color: var(--p-soft); font-weight: 600; border: 1px solid rgba(255,255,255,.9); }
+.p-mini b { display: block; color: var(--p-ink); font-size: 13.5px; margin-top: 2px; }
+.p-greet { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; }
+.p-say { background: #fff; border-radius: 16px 16px 16px 4px; padding: 10px 12px; font-size: 12.5px; line-height: 1.4; box-shadow: 0 6px 20px -12px rgba(60,30,140,.4); }
+.screen.on .p-anim { animation: pop .6s cubic-bezier(.2,.9,.3,1.2) both; }
+.screen.on .p-anim.a2 { animation-delay: .15s; } .screen.on .p-anim.a3 { animation-delay: .3s; } .screen.on .p-anim.a4 { animation-delay: .45s; }
+
+/* mini Lumi in the app mirrors the big one's mood */
+.mini { --sz: 64px; width: var(--sz); height: var(--sz); border-radius: 50%; position: relative; flex: none;
+  background: radial-gradient(circle at 40% 36%, #ffffff 0%, #d4f9ff 26%, #8fe2fa 64%, #5cc4ea 100%);
+  box-shadow: 0 0 26px 4px rgba(120, 220, 255, .55); animation: bob 4.2s ease-in-out infinite; transition: filter .4s ease; }
+.mini .e { position: absolute; top: 36%; width: 11%; height: 17%; border-radius: 50%; background: #170f3a; transition: all .3s ease; animation: blink 5s infinite; box-sizing: border-box; }
+.mini .e::after { content: ""; position: absolute; width: 40%; height: 32%; top: 16%; right: 12%; border-radius: 50%; background: #fff; }
+.mini .e.l { left: 30%; } .mini .e.r { right: 30%; }
+.mini .m { position: absolute; left: 50%; top: 59%; width: 12%; height: 6%; margin-left: -6%; border-bottom: 2px solid #170f3a; border-radius: 0 0 50% 50%; transition: all .3s ease; box-sizing: border-box; }
+.mini .b { position: absolute; top: 55%; width: 16%; height: 9%; border-radius: 50%; background: rgba(255, 140, 190, .55); filter: blur(1.5px); }
+.mini .b.l { left: 16%; } .mini .b.r { right: 16%; }
+.mini.sm { --sz: 32px; box-shadow: 0 0 14px 2px rgba(120, 220, 255, .5); }
+.mini.sm .m { border-bottom-width: 1.5px; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+@keyframes hopm { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-6px) scale(1.06); } }
+[data-mood="laugh"] .mini .e { height: 9%; top: 40%; background: transparent; border: 2px solid #170f3a; border-bottom: 0; border-radius: 50% 50% 0 0; animation: none; }
+[data-mood="laugh"] .mini .e::after, [data-mood="excite"] .mini .e::after { display: none; }
+[data-mood="laugh"] .mini .m, [data-mood="excite"] .mini .m { height: 11%; width: 16%; margin-left: -8%; background: #170f3a; border: 0; border-radius: 0 0 50% 50%; }
+[data-mood="excite"] .mini { animation: hopm .45s ease-in-out infinite; }
+[data-mood="excite"] .mini .e { transform: scale(1.25); animation: none; background: radial-gradient(circle at 62% 34%, #fff 0 20%, #170f3a 24%); }
+[data-mood="cry"] .mini { filter: saturate(.65) brightness(.9); }
+[data-mood="cry"] .mini .e { transform: translateY(2px) scaleY(.8); }
+[data-mood="cry"] .mini .m { border-bottom: 0; border-top: 2px solid #170f3a; border-radius: 50% 50% 0 0; top: 63%; }
+
+/* chat screen */
+.p-chat-head { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 16px; }
+.p-chat-head small { display: block; font-size: 11px; color: #2f9e6c; font-weight: 600; }
+.p-chat { display: grid; gap: 8px; }
+.p-b { max-width: 84%; padding: 9px 12px; font-size: 12.5px; line-height: 1.4; border-radius: 16px; }
+.p-b.you { justify-self: end; background: #5b45c4; color: #fff; border-bottom-right-radius: 4px; }
+.p-b.lu { justify-self: start; background: #fff; border-bottom-left-radius: 4px; box-shadow: 0 6px 20px -12px rgba(60,30,140,.4); }
+.p-b.add { justify-self: start; background: #fff4d6; color: #7a5200; font-weight: 700; border: 1px dashed #e7b84e; }
+.screen.on .p-b { animation: pop .5s cubic-bezier(.2,.9,.3,1.2) both; }
+.screen:not(.on) .p-b { opacity: 0; }
+.screen.on .p-b:nth-child(2) { animation-delay: .9s; } .screen.on .p-b:nth-child(3) { animation-delay: 1.8s; }
+.screen.on .p-b:nth-child(4) { animation-delay: 2.7s; } .screen.on .p-b:nth-child(5) { animation-delay: 3.5s; }
+.p-input { position: absolute; left: 14px; right: 14px; bottom: 8px; height: 40px; border-radius: 20px; background: #fff; display: flex; align-items: center; padding: 0 6px 0 14px; font-size: 12.5px; color: #8f82bd; box-shadow: 0 6px 20px -12px rgba(60,30,140,.4); }
+.p-input span { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: #5b45c4; }
+
+/* manifest screen */
+.p-prog { display: flex; align-items: center; gap: 14px; }
+.p-ring { width: 62px; height: 62px; flex: none; transform: rotate(-90deg); }
+.p-ring .arc { stroke-dasharray: 163; stroke-dashoffset: 163; transition: stroke-dashoffset 1.6s cubic-bezier(.2,.8,.2,1) .3s; }
+.screen.on .p-ring .arc { stroke-dashoffset: 65; }
+.p-list { display: grid; gap: 7px; }
+.p-li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: center; background: var(--p-card); border-radius: 14px; padding: 10px 12px; font-size: 12.5px; font-weight: 600; border: 1px solid rgba(255,255,255,.9); }
+.p-li .ck { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #b9acdf; transition: all .4s ease; position: relative; box-sizing: border-box; }
+.p-li .ck::after { content: ""; position: absolute; inset: 3px; background: #fff; clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0 50%, 39% 38%); transform: scale(0); transition: transform .4s cubic-bezier(.3,1.6,.4,1); }
+.screen.on .p-li.d .ck { background: #f2b53a; border-color: #f2b53a; box-shadow: 0 0 12px rgba(242,181,58,.7); }
+.screen.on .p-li.d .ck::after { transform: scale(1); }
+.screen.on .p-li.d:nth-child(1) .ck, .screen.on .p-li.d:nth-child(1) .ck::after { transition-delay: .5s; }
+.screen.on .p-li.d:nth-child(2) .ck, .screen.on .p-li.d:nth-child(2) .ck::after { transition-delay: 1.1s; }
+.screen.on .p-li.d:nth-child(3) .ck, .screen.on .p-li.d:nth-child(3) .ck::after { transition-delay: 1.7s; }
+.p-step { background: linear-gradient(135deg, #5b45c4, #8c6be0); color: #fff; border-radius: 18px; padding: 12px 14px; font-size: 12.5px; line-height: 1.4; }
+.p-step .p-label { color: rgba(255,255,255,.78); }
+
+/* readings screen */
+.p-seg { display: flex; gap: 2px; background: rgba(255,255,255,.65); border-radius: 999px; padding: 4px; font-size: 10.5px; font-weight: 700; }
+.p-seg span { flex: 1; text-align: center; padding: 6px 0; border-radius: 999px; color: var(--p-soft); }
+.p-seg span.a { background: #5b45c4; color: #fff; }
+.p-chart { width: 170px; height: 170px; margin: 0 auto; display: block; overflow: visible; }
+.p-chart .wheel { transform-origin: 85px 85px; transform-box: view-box; }
+.screen.on .p-chart .wheel { animation: spin 40s linear infinite; }
+.p-big3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.p-cta { background: #2a1d63; color: #fff; text-align: center; border-radius: 999px; padding: 11px; font-size: 12.5px; font-weight: 700; }
+
+/* tab bar: floating glass capsule, iOS 26 style */
+.p-tabs { position: absolute; left: 12px; right: 12px; bottom: 22px; height: 58px; border-radius: 30px; z-index: 5; box-sizing: border-box;
+  background: rgba(255,255,255,.66); border: 1px solid rgba(255,255,255,.95); box-shadow: 0 10px 30px -12px rgba(60, 30, 140, .45), inset 0 1px 0 rgba(255,255,255,.9);
+  -webkit-backdrop-filter: blur(14px) saturate(1.6); backdrop-filter: blur(14px) saturate(1.6);
+  display: grid; grid-template-columns: repeat(4, 1fr); padding: 4px; }
+.p-tabs span { display: grid; justify-items: center; align-content: center; gap: 2px; font-size: 9.5px; font-weight: 700; color: #8d80ba; border-radius: 26px; transition: color .4s ease, background .4s ease; }
+.p-tabs svg { width: 21px; height: 21px; transition: transform .4s cubic-bezier(.3,1.6,.4,1); }
+.p-tabs span.a { color: #5b45c4; background: rgba(91, 69, 196, .12); }
+.p-tabs span.a svg { transform: scale(1.06); }
+.p-home { position: absolute; bottom: 7px; left: 50%; width: 108px; height: 4.5px; margin-left: -54px; border-radius: 3px; background: #120c30; z-index: 6; }
+
+.made-for { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; color: var(--ink-faint); margin: 0; }
+
+@media (max-width: 880px) {
+  .tour-grid { grid-template-columns: 1fr; }
+  .phone-col { grid-row: 1; grid-column: 1; top: calc(env(safe-area-inset-top, 0px) + 76px); z-index: 1; }
+  .steps { grid-row: 1; grid-column: 1; }
+  .step { min-height: 75vh; opacity: 0; pointer-events: none; }
+  .step.on { opacity: 0; }
+  .phone-caption { display: grid; gap: 6px; text-align: center; max-width: 380px; min-height: 118px; align-content: start; }
+  .phone-caption h3 { font-size: 21px; line-height: 1.2; }
+  .phone-caption p { margin: 0; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
+  .phone-caption .step-k { font-size: 12px; }
+  .phone-caption.swap { animation: pop .5s cubic-bezier(.2,.9,.3,1.2) both; }
+}
+
+/* phone */
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  .wrap { padding-block: 12vh; }
+  #home .wrap { padding-top: 46vh; }
+  #begin .wrap { padding-top: 44vh; }
+  .sec:not(#home):not(#begin) .wrap { padding-top: 22vh; }
+  .card, .reading, .plan { padding: 22px; }
+  .glass { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+  .price b { font-size: 48px; }
+}
+</style>
+</head>
+<body>
+
+
+<div class="sky-fallback" aria-hidden="true"></div>
+<canvas id="sky" aria-label="Lumi, a glowing light spirit, floating through a sky of clouds and stars"></canvas>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#home" aria-label="Lunaz home"><span class="brand-orb" aria-hidden="true"></span>Lunaz</a>
+    <ul class="nav-links">
+      <li><a href="#manifest">Manifest</a></li>
+      <li><a href="#vent">Talk it out</a></li>
+      <li><a href="#readings">Readings</a></li>
+      <li><a href="#signs">Signs</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-glow" href="#begin">Get the app</a>
+  </div>
+</header>
+
+<nav class="rail" aria-label="Sections" id="rail"></nav>
+
+<main>
+  <!-- 1. hero -->
+  <section class="sec center" id="home" data-label="Home" data-sky="dusk" data-lumi="0,0.36,1.05" data-lumi-m="0,0.46,0.8" data-emote="excite">
+    <div class="wrap">
+      <div class="col">
+        <p class="eyebrow rv in">The spiritual wellness app for iPhone</p>
+        <h1 class="rv in d1">Your spiritual life, finally <span class="dream">in one place.</span></h1>
+        <p class="lead rv in d2">Manifest the life you want, talk through the heavy days, and finally understand yourself through your stars, your design, your numbers and your dreams. Lumi lives in your pocket, ready day or night.</p>
+        <div class="ctas rv in d3">
+          <a class="btn btn-app" data-app-link href="https://www.lunaz.app/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg><span class="two-line"><small>Download for</small><b>iPhone</b></span></a>
+          <a class="btn btn-ghost" href="#app">Take the tour</a>
+        </div>
+        <p class="hint rv in d4">Free to start, no card needed. <b>Tap Lumi</b> to say hi.</p>
+      </div>
+    </div>
+    <span class="scroll-cue" aria-hidden="true"></span>
+  </section>
+
+  <!-- 1b. app tour -->
+  <section class="sec tour" id="app" data-label="The app">
+    <div class="wrap">
+      <div class="tour-intro">
+        <p class="eyebrow rv">The Lunaz app</p>
+        <h2 class="rv d1">A pocket-sized sanctuary, <span class="dream">on your iPhone.</span></h2>
+        <p class="lead rv d2">Open it on the bus, in bed, or in the middle of a hard day. Everything you need to feel grounded and move forward is one tap away.</p>
+      </div>
+      <div class="tour-grid">
+        <div class="steps">
+          <div class="step" data-lumi-ph="1,0.36,0.5" data-step="0" data-sky="dusk" data-lumi="0.14,0.46,0.5" data-lumi-m="-0.84,0.55,0.36" data-emote="laugh">
+            <p class="step-k">Today</p>
+            <h3>Start every day knowing what it holds.</h3>
+            <p>Your daily forecast, your energy and a gentle nudge from Lumi, waiting the moment you open the app.</p>
+          </div>
+          <div class="step" data-lumi-ph="-1,-0.32,0.5" data-step="1" data-sky="dusk2" data-lumi="0.86,-0.3,0.5" data-lumi-m="0.84,0.15,0.36" data-emote="cry">
+            <p class="step-k">Talk</p>
+            <h3>Talk it out, any time.</h3>
+            <p>Type what's on your mind and watch the heavy stuff turn into something you can work with, then into a step on your list.</p>
+          </div>
+          <div class="step" data-lumi-ph="1,-0.36,0.5" data-step="2" data-sky="dusk" data-lumi="0.12,-0.42,0.5" data-lumi-m="-0.84,0.2,0.36" data-emote="excite">
+            <p class="step-k">Manifest</p>
+            <h3>See your list come true.</h3>
+            <p>Every goal you name becomes an aligned step you can take today. Check them off and watch the progress add up.</p>
+          </div>
+          <div class="step" data-lumi-ph="-1,0.4,0.5" data-step="3" data-sky="dusk" data-lumi="0.86,0.42,0.5" data-lumi-m="0.84,0.55,0.36" data-emote="laugh">
+            <p class="step-k">Readings</p>
+            <h3>Your whole chart, in your hand.</h3>
+            <p>Astrology, Human Design, numerology and dreams, calculated from your real details and explained in plain words.</p>
+          </div>
+        </div>
+        <div class="phone-col">
+          <div class="phone-box" id="phoneBox">
+            <div class="phone-tilt" id="phoneTilt">
+              <div class="phone-depth d3"></div><div class="phone-depth d2"></div><div class="phone-depth d1"></div>
+              <span class="pb action"></span><span class="pb volup"></span><span class="pb voldn"></span><span class="pb side"></span><span class="pb cam"></span>
+              <div class="phone" id="phone" role="img" aria-label="The Lunaz iPhone app, showing the screen described beside it">
+                <div class="bezel"><div class="scr">
+                  <div class="island"></div>
+                  <div class="status"><span>9:41</span><span class="r"><svg viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.2c2.3 0 4.4.9 6 2.4l1.2-1.3A10.3 10.3 0 0 0 8 .4 10.3 10.3 0 0 0 .8 3.3L2 4.6a8.5 8.5 0 0 1 6-2.4zm0 3.6c1.3 0 2.5.5 3.4 1.3l1.2-1.3A6.7 6.7 0 0 0 8 4a6.7 6.7 0 0 0-4.6 1.8l1.2 1.3c.9-.8 2.1-1.3 3.4-1.3zM8 9.4l2.1-2.2A3.1 3.1 0 0 0 8 6.4c-.8 0-1.5.3-2.1.8z"/></svg><span class="batt"><i></i></span></span></div>
+
+                  <div class="screen on" data-screen="0">
+                    <p class="p-date">FRIDAY, OCTOBER 31</p>
+                    <p class="p-h">Good evening</p>
+                    <div class="p-greet p-anim"><span class="mini"><i class="e l"></i><i class="e r"></i><i class="m"></i><i class="b l"></i><i class="b r"></i></span><div class="p-say">The Moon is in Pisces tonight. Trust the quiet hunch you had this morning.</div></div>
+                    <div class="p-row p-anim a2"><div class="p-mini">Moon<b>Pisces</b></div><div class="p-mini">Life path<b>7</b></div><div class="p-mini">Type<b>Projector</b></div></div>
+                    <div class="p-card p-anim a3"><p class="p-label">Today's forecast</p>A soft day for reflection. Say yes to the invitation that feels warm, and let the rest wait.</div>
+                    <div class="p-card p-anim a4"><p class="p-label">Your aligned step</p>Send the message you've been drafting in your head.</div>
+                  </div>
+
+                  <div class="screen" data-screen="1">
+                    <div class="p-chat-head"><span class="mini sm"><i class="e l"></i><i class="e r"></i><i class="m"></i><i class="b l"></i><i class="b r"></i></span><span>Lumi<small>here for you</small></span></div>
+                    <div class="p-chat">
+                      <div class="p-b you">Work was rough. I keep feeling like I'm behind everyone.</div>
+                      <div class="p-b lu">That sounds heavy. What if this slower stretch is redirection, not failure?</div>
+                      <div class="p-b you">Maybe. I do want a job that fits me better.</div>
+                      <div class="p-b lu">Then let's start there. I'll add it to your list.</div>
+                      <div class="p-b add">✦ Added: A job that feels like me</div>
+                    </div>
+                    <div class="p-input">Tell Lumi anything…<span></span></div>
+                  </div>
+
+                  <div class="screen" data-screen="2">
+                    <p class="p-h">My manifestations</p>
+                    <div class="p-prog p-anim"><svg class="p-ring" viewBox="0 0 62 62"><circle cx="31" cy="31" r="26" fill="none" stroke="#e3dbff" stroke-width="7"/><circle class="arc" cx="31" cy="31" r="26" fill="none" stroke="#f2b53a" stroke-width="7" stroke-linecap="round"/></svg><div><b>3 of 5 manifested</b><br><span style="color:#6c5aa8;font-size:12.5px">You're closer than you think.</span></div></div>
+                    <div class="p-list">
+                      <div class="p-li d"><span class="ck"></span>A job that feels like me</div>
+                      <div class="p-li d"><span class="ck"></span>Slow mornings, no rushing</div>
+                      <div class="p-li d"><span class="ck"></span>A love that feels safe</div>
+                      <div class="p-li"><span class="ck"></span>Money that flows with ease</div>
+                      <div class="p-li"><span class="ck"></span>Move somewhere by the sea</div>
+                    </div>
+                    <div class="p-step p-anim a3"><p class="p-label">Today's aligned step</p>Spend 20 minutes updating your portfolio.</div>
+                  </div>
+
+                  <div class="screen" data-screen="3">
+                    <div class="p-seg"><span class="a">Astrology</span><span>Design</span><span>Numbers</span><span>Dreams</span></div>
+                    <svg class="p-chart" viewBox="0 0 170 170" aria-hidden="true">
+                      <defs><radialGradient id="pcg"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#ece5ff"/></radialGradient></defs>
+                      <circle cx="85" cy="85" r="82" fill="url(#pcg)" stroke="#cfc3f5"/>
+                      <g class="wheel" stroke="#b9acdf" fill="none">
+                        <circle cx="85" cy="85" r="64"/><circle cx="85" cy="85" r="40"/>
+                        <path d="M85 3v20M85 147v20M3 85h20M147 85h20M27 27l14 14M129 129l14 14M143 27l-14 14M41 129l-14 14M43.5 13l10 17.3M116.5 157l-10-17.3M157 43.5l-17.3 10M13 126.5l17.3-10M126.5 13l-10 17.3M53.5 157l10-17.3M157 126.5l-17.3-10M13 43.5l17.3 10"/>
+                        <circle cx="85" cy="25" r="5" fill="#f2b53a" stroke="none"/><circle cx="135" cy="105" r="4" fill="#5b45c4" stroke="none"/><circle cx="45" cy="125" r="4" fill="#8fe2fa" stroke="none"/><circle cx="40" cy="60" r="3.5" fill="#ff8cbe" stroke="none"/>
+                        <path d="M85 25L135 105 45 125Z" stroke="#5b45c4" stroke-opacity=".5"/>
+                      </g>
+                    </svg>
+                    <div class="p-big3 p-anim a2"><div class="p-mini">Sun<b>Leo</b></div><div class="p-mini">Moon<b>Pisces</b></div><div class="p-mini">Rising<b>Libra</b></div></div>
+                    <div class="p-card p-anim a3"><p class="p-label">This week</p>Venus lights up your sector of home and belonging. Make space for the people who feel like rest.</div>
+                    <div class="p-cta p-anim a4">Read my full chart</div>
+                  </div>
+
+                  <div class="p-tabs" id="pTabs">
+                    <span class="a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>Today</span>
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/></svg>Talk</span>
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 5.3 5.8.5-4.4 3.8 1.3 5.6L12 15.3 7.1 18.2l1.3-5.6L4 8.8l5.8-.5z"/></svg>Manifest</span>
+                    <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>Readings</span>
+                  </div>
+                  <div class="p-home"></div>
+                </div></div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-caption" id="phoneCap" aria-hidden="true"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. manifestation -->
+  <section class="sec right" id="manifest" data-label="Manifest" data-sky="dusk" data-lumi="-0.52,0.04,0.95" data-lumi-m="0.52,0.7,0.46" data-emote="laugh">
+    <div class="wrap">
+      <div class="col">
+        <p class="eyebrow rv">Manifestation</p>
+        <h2 class="rv d1">Every dream starts <span class="dream">with you.</span></h2>
+        <p class="lead rv d2">Get clear on the life you're calling in. Talk it through with Lumi and it becomes a manifestation list you can act on, with small aligned steps that move you forward every day.</p>
+        <div class="glass mlist rv d3" id="mlist" aria-label="Example manifestation list">
+          <div class="mlist-head"><span>My manifestation list</span><small>example</small></div>
+          <div class="mitem"><span class="box"></span><span>A job that feels like me</span><span class="tag">MANIFESTED</span></div>
+          <div class="mitem"><span class="box"></span><span>Slow mornings, no rushing</span><span class="tag">MANIFESTED</span></div>
+          <div class="mitem"><span class="box"></span><span>A love that feels safe</span><span class="tag">MANIFESTED</span></div>
+          <div class="mitem"><span class="box"></span><span>Money that flows with ease</span><span class="tag">IN MOTION</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. vent -->
+  <section class="sec" id="vent" data-label="Talk it out" data-sky="dusk2" data-lumi="0.52,0.06,0.95" data-lumi-m="-0.52,0.7,0.46" data-emote="">
+    <div class="wrap">
+      <div class="col">
+        <p class="eyebrow rv">Vent about your day</p>
+        <h2 class="rv d1">Say the heavy thing. <span class="dream">Leave lighter.</span></h2>
+        <p class="lead rv d2">Talk through work, relationships and the decisions keeping you up at night. Lumi listens without judgment, helps you see it from a kinder angle, and turns what you really want into steps on your manifestation list.</p>
+        <div class="glass chat rv d3" aria-live="polite">
+          <div class="chat-top"><span class="brand-orb" aria-hidden="true"></span>Lumi<small>example chat</small></div>
+          <div class="bubbles" id="bubbles"></div>
+          <div class="thoughts" role="group" aria-label="Try a thought">
+            <button class="chip" type="button" data-thought="0" aria-pressed="false">Happening to me</button>
+            <button class="chip" type="button" data-thought="1" aria-pressed="false">The rejection</button>
+            <button class="chip" type="button" data-thought="2" aria-pressed="false">They hate me</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. what's included -->
+  <section class="sec" id="caps" data-label="What's inside" data-sky="dusk" data-lumi="-0.86,0.3,0.55" data-lumi-m="0.6,0.78,0.36" data-emote="laugh">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow rv">What's included</p>
+        <h2 class="rv d1">Everything your spirit needs, <span class="dream">in one gentle place.</span></h2>
+      </div>
+      <div class="grid3">
+        <article class="glass card rv">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/></svg></span>
+          <h3>Talk it through</h3>
+          <p>Untangle racing thoughts any time of day, and go to bed with a clearer head.</p>
+        </article>
+        <article class="glass card rv d1">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.2 5.3 5.8.5-4.4 3.8 1.3 5.6L12 15.3 7.1 18.2l1.3-5.6L4 8.8l5.8-.5z"/></svg></span>
+          <h3>Manifestation</h3>
+          <p>Name what you want, take aligned action, and see your progress add up.</p>
+        </article>
+        <article class="glass card rv d2">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>
+          <h3>Love and attachment</h3>
+          <p>Understand your attachment style and why you love the way you do, so you can choose what feels safe.</p>
+        </article>
+        <article class="glass card rv">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12c2.5 0 2.5-4 5-4s2.5 8 5 8 2.5-8 5-8 2.5 4 5 4"/></svg></span>
+          <h3>Nervous system support</h3>
+          <p>Gentle ways to settle your body when everything feels like too much.</p>
+        </article>
+        <article class="glass card rv d1">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v5M12 17v5M2 12h5M17 12h5M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/></svg></span>
+          <h3>Magical moments and signs</h3>
+          <p>Catch the wonders and synchronicities you'd usually miss, and see the pattern in them.</p>
+        </article>
+        <article class="glass card rv d2">
+          <span class="num">111 · 444</span>
+          <h3>Angel numbers</h3>
+          <p>Find out what the numbers you keep seeing could be pointing you toward.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. readings -->
+  <section class="sec" id="readings" data-label="Readings" data-sky="night" data-lumi="0.88,-0.5,0.55" data-lumi-m="-0.6,0.78,0.36" data-emote="excite">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow rv">Readings</p>
+        <h2 class="rv d1">Know who you are, <span class="dream">and what's next.</span></h2>
+        <p class="lead rv d2">Calculated from your real birth details, explained in plain words, and made to help you choose your next step with confidence.</p>
+      </div>
+      <div class="grid2">
+        <article class="glass reading rv">
+          <svg class="glyph spin" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="40" cy="40" r="36"/><circle cx="40" cy="40" r="26"/><circle cx="40" cy="40" r="5"/><g stroke-opacity=".7"><path d="M40 4v10M40 66v10M4 40h10M66 40h10M14.5 14.5l7 7M58.5 58.5l7 7M65.5 14.5l-7 7M21.5 58.5l-7 7"/></g><path d="M40 14L58 52 22 52Z" stroke="#ffd88a" stroke-opacity=".8"/></svg>
+          <h3>Astrology</h3>
+          <p>Your natal chart plus daily, weekly and yearly forecasts, so you can plan with your stars instead of against them.</p>
+          <span class="gives">Natal chart · forecasts</span>
+        </article>
+        <article class="glass reading rv d1">
+          <svg class="glyph" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M40 6L48 18H32Z"/><path d="M33 24h14v10H33z"/><path d="M40 40l8 8-8 8-8-8z" fill="#ffd88a" fill-opacity=".25"/><path d="M28 62h24v12H28z"/><path d="M14 44l10 6-10 6zM66 44l-10 6 10 6z"/><path d="M40 18v6M40 34v6M40 56v6M24 50h8M48 50h8" stroke-opacity=".6"/></svg>
+          <h3>Human Design</h3>
+          <p>Learn how your energy works best, from your birth data, and stop forcing what was never yours to carry.</p>
+          <span class="gives">Type · strategy · authority</span>
+        </article>
+        <article class="glass reading rv">
+          <svg class="glyph" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><circle cx="40" cy="40" r="34" stroke-opacity=".5"/><text x="40" y="52" text-anchor="middle" font-family="Quicksand, sans-serif" font-weight="700" font-size="34" fill="#ffd88a" stroke="none">7</text></svg>
+          <h3>Numerology</h3>
+          <p>Your name and birth date reveal your life path number and the themes that keep calling you.</p>
+          <span class="gives">Life path · name numbers</span>
+        </article>
+        <article class="glass reading rv d1">
+          <svg class="glyph" viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M50 12a22 22 0 1 0 18 34A18 18 0 1 1 50 12z" fill="#ffd88a" fill-opacity=".18" stroke="#ffd88a"/><path d="M14 62a8 8 0 0 1 8-8 10 10 0 0 1 19 2 6 6 0 0 1 1 12H18a5 5 0 0 1-4-6z"/></svg>
+          <h3>Dreams</h3>
+          <p>Share a whole dream, or just one image you remember, and understand what your subconscious is working through.</p>
+          <span class="gives">Full dream or a single image</span>
+        </article>
+      </div>
+      <div class="extras rv">
+        <span>Also on request</span>
+        <span class="pill">Vedic charts</span><span class="pill">Crystals</span><span class="pill">Tarot, for reflection</span><span class="pill">I-Ching</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. signs -->
+  <section class="sec right" id="signs" data-label="Signs" data-sky="aurora" data-lumi="-0.52,0.02,0.95" data-lumi-m="0.52,0.7,0.46" data-emote="laugh">
+    <div class="wrap">
+      <div class="col">
+        <p class="eyebrow rv">Magical moments, synchronicities, signs</p>
+        <h2 class="rv d1">A life that starts <span class="dream">winking back at you.</span></h2>
+        <ul class="outcomes rv d2">
+          <li><span><b>Log the wonders.</b> Save the little moments that made you stop and smile.</span></li>
+          <li><span><b>Track synchronicities.</b> Spot the patterns that keep repeating, and act on them.</span></li>
+          <li><span><b>Ask for a sign.</b> Get a nudge when you're standing at a crossroads.</span></li>
+        </ul>
+        <div class="glass sign-box rv d3">
+          <div class="sign-out" id="signOut">Ready when you are.</div>
+          <div class="ctas"><button class="btn btn-glow" type="button" id="signBtn">Ask for a sign</button></div>
+          <p class="sign-note">A playful preview. In the app, your signs are shaped by your own chart and story.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. trust -->
+  <section class="sec" id="why" data-label="Why Lunaz" data-sky="aurora" data-lumi="0.52,0.1,0.9" data-lumi-m="-0.52,0.72,0.44" data-emote="laugh">
+    <div class="wrap">
+      <div class="col">
+        <p class="eyebrow rv">Spiritual, and actually solid</p>
+        <h2 class="rv d1">The magic is welcome. <span class="dream">The flakiness is not.</span></h2>
+        <ul class="trust">
+          <li class="rv d1"><b>Your real sky</b><span>Astrology and Human Design use planetary positions checked against NASA JPL Horizons data, so your chart is truly yours.</span></li>
+          <li class="rv d2"><b>Honest about its limits</b><span>Lunaz is wellness, not therapy. When you need more support, Lumi points you to real people who can help.</span></li>
+          <li class="rv d3"><b>Open about what it is</b><span>Lumi is AI and always says so. No pretending, no mind games.</span></li>
+          <li class="rv d4"><b>No belief required</b><span>Come curious, skeptical or all in. You decide what resonates.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. pricing -->
+  <section class="sec" id="pricing" data-label="Pricing" data-sky="dusk" data-lumi="-0.86,0.28,0.55" data-lumi-m="0.6,0.78,0.36" data-emote="excite">
+    <div class="wrap">
+      <div class="head">
+        <p class="eyebrow rv">Pricing</p>
+        <h2 class="rv d1">Begin free. <span class="dream">Commit when you're ready.</span></h2>
+      </div>
+      <div class="plans">
+        <article class="glass plan rv">
+          <div class="plan-name">Free</div>
+          <div class="price"><b>$0</b><span>forever</span></div>
+          <ul>
+            <li>No card needed</li>
+            <li>20 credits every day, refreshed each night</li>
+            <li>A starter reading to meet yourself</li>
+          </ul>
+          <a class="btn btn-ghost" data-app-link href="https://www.lunaz.app/" target="_blank" rel="noopener">Download free</a>
+        </article>
+        <article class="glass plan feature rv d1">
+          <div class="plan-name">Membership <span class="badge">Most loved</span></div>
+          <div class="price"><b>$20</b><span>/ month, starting at</span></div>
+          <div class="tiers" role="group" aria-label="Monthly credits">
+            <button class="tier" type="button" data-tier="250" aria-pressed="true"><b>250</b><small>credits</small></button>
+            <button class="tier" type="button" data-tier="500" aria-pressed="false"><b>500</b><small>credits</small></button>
+            <button class="tier" type="button" data-tier="1000" aria-pressed="false"><b>1,000</b><small>save 5%</small></button>
+            <button class="tier" type="button" data-tier="2000" aria-pressed="false"><b>2,000</b><small>save 10%</small></button>
+          </div>
+          <p class="tier-note" id="tierNote">250 credits a month, about 31 full readings.</p>
+          <ul>
+            <li>Every reading type</li>
+            <li>Unused credits roll over for a month</li>
+            <li>Top up whenever you need</li>
+          </ul>
+          <a class="btn btn-glow" data-app-link href="https://www.lunaz.app/" target="_blank" rel="noopener">Get the app</a>
+        </article>
+      </div>
+      <div class="glass credits rv">
+        <span>How credits work:</span>
+        <span><b>1</b> short message</span>
+        <span><b>2</b> longer reply</span>
+        <span><b>8</b> full reading</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. faq -->
+  <section class="sec" id="faq" data-label="FAQ" data-sky="dusk2" data-lumi="0.55,0.1,0.85" data-lumi-m="-0.6,0.78,0.36" data-emote="laugh">
+    <div class="wrap">
+      <div class="col" style="max-width:600px">
+        <p class="eyebrow rv">Questions, answered</p>
+        <h2 class="rv d1">The <span class="dream">honest</span> answers.</h2>
+        <div class="faq">
+          <details class="glass rv"><summary>Do I need to believe in astrology?</summary><p>No. Plenty of people use Lunaz to reflect, journal and get to know themselves. Take what resonates and leave the rest.</p></details>
+          <details class="glass rv"><summary>Is Lunaz therapy?</summary><p>No. Lunaz is a wellness and educational companion, not therapy or medical care. If you need more support, Lumi will point you toward real people who can help.</p></details>
+          <details class="glass rv"><summary>Are the readings made up?</summary><p>They're calculated. Planetary positions for your astrology and Human Design are checked against NASA JPL Horizons data.</p></details>
+          <details class="glass rv"><summary>Can I just vent?</summary><p>Yes. Talk about your day, ask an open question, or think out loud. No reading required.</p></details>
+          <details class="glass rv"><summary>Is Lumi a real person?</summary><p>Lumi is AI, and always tells you so.</p></details>
+          <details class="glass rv"><summary>Do I need my exact birth time?</summary><p>Only for your rising sign and your Human Design. Everything else works with your birth date.</p></details>
+          <details class="glass rv"><summary>How do credits work?</summary><p>A short message is 1 credit, a longer reply is 2, and a full reading is 8. Free accounts get 20 credits every day.</p></details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. final -->
+  <section class="sec center" id="begin" data-label="Begin" data-sky="sunrise" data-lumi="0,0.36,1.1" data-lumi-m="0,0.46,0.8" data-emote="excite">
+    <div class="wrap">
+      <div class="col">
+        <h2 class="rv">Come home to a calmer life. <span class="dream">A little more magic.</span></h2>
+        <p class="lead rv d1">Your manifestation list, your readings and someone to talk to, right on your iPhone and ready whenever you are.</p>
+        <div class="ctas rv d2">
+          <a class="btn btn-app" data-app-link href="https://www.lunaz.app/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="3"/><path d="M10.5 18.5h3"/></svg><span class="two-line"><small>Download for</small><b>iPhone</b></span></a>
+        </div>
+        <p class="fine rv d3">Free to start. No card needed.</p>
+      </div>
+      <footer>
+        <a class="brand" href="#home"><span class="brand-orb" aria-hidden="true"></span>Lunaz</a>
+        <nav aria-label="Footer">
+          <a href="#caps">What you can do</a><a href="#signs">The magic</a><a href="#why">Why Lunaz</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
+          <a href="https://www.lunaz.app/privacy" target="_blank" rel="noopener">Privacy</a><a href="https://www.lunaz.app/terms" target="_blank" rel="noopener">Terms</a>
+        </nav>
+        <span>© 2026 Lunaz</span>
+        <p class="disclaimer">Lunaz is a wellness and educational service. It is not therapy, and not medical or mental health care. If you're in crisis, please contact local emergency services.</p>
+      </footer>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js"></script>
+<script>
+document.documentElement.classList.add('js');
+(() => {
+  'use strict';
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const MOTION = reduceMotion ? 0.35 : 1.0;
+
+  /* ============ page UI (works without WebGL) ============ */
+  const sections = $$('main > .sec');
+  const nav = $('#nav');
+  const rail = $('#rail');
+  sections.forEach(s => {
+    const a = document.createElement('a'); a.href = '#' + s.id; a.innerHTML = '<span>' + s.dataset.label + '</span>';
+    a.setAttribute('aria-label', s.dataset.label); rail.appendChild(a);
+  });
+  const railDots = $$('a', rail);
+
+  // reveal: anything already on screen is shown immediately
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  $$('.rv').forEach(el => { const r = el.getBoundingClientRect(); if (r.top < innerHeight) el.classList.add('in'); else io.observe(el); });
+
+  // Swap this for the App Store listing once it is live; every download button uses it.
+  const APP_URL = 'https://www.lunaz.app/';
+  $$('[data-app-link]').forEach(a => { a.href = APP_URL; });
+
+  let lumiApi = null; // filled in once the 3D scene starts
+  let moodTimer = null;
+  const DUR = { laugh: 3.8, cry: 5.4, excite: 3.8 };
+  // the in-app mini Lumi mirrors whatever the big one feels
+  function setMood(name, dur) {
+    clearTimeout(moodTimer); document.documentElement.dataset.mood = name;
+    moodTimer = setTimeout(() => { delete document.documentElement.dataset.mood; }, ((dur || DUR[name] || 3) - 0.6) * 1000);
+  }
+  const emote = (name, dur) => { if (!name) return; setMood(name, dur); if (lumiApi) lumiApi.play(name, dur); };
+
+  // manifestation list ticks itself off while in view
+  const mlist = $('#mlist'); const mitems = $$('.mitem', mlist); let mTimer = null;
+  new IntersectionObserver(es => es.forEach(e => {
+    clearInterval(mTimer);
+    if (e.isIntersecting) {
+      let i = mitems.findIndex(m => !m.classList.contains('done'));
+      if (i < 0) return;
+      mTimer = setInterval(() => {
+        if (i >= mitems.length) { clearInterval(mTimer); return; }
+        mitems[i].classList.add('done'); if (lumiApi) lumiApi.sparkle(10);
+        i++; if (i === mitems.length - 1) emote('excite', 3);
+      }, 1100);
+    } else if (e.boundingClientRect.top > 0) mitems.forEach(m => m.classList.remove('done'));
+  }), { threshold: 0.6 }).observe(mlist);
+
+  // vent chat demo
+  const THOUGHTS = [
+    ['This is all happening to me.', 'Maybe it\'s happening <span class="dream">for</span> you. What would you choose next if that were true?'],
+    ['That rejection means I\'m behind.', 'Maybe the rejection is <span class="dream">redirection.</span> Let\'s look at where it\'s pointing you.'],
+    ['I feel like they hate me.', 'Maybe this is an <span class="dream">old alarm,</span> not this room. Want to check what\'s actually here?']
+  ];
+  const bubbles = $('#bubbles'); const chips = $$('[data-thought]');
+  let ventIdx = -1, ventTimers = [], ventLoop = null, ventVisible = false;
+  function showThought(i, fromUser) {
+    ventTimers.forEach(clearTimeout); ventTimers = [];
+    ventIdx = i; chips.forEach(c => c.setAttribute('aria-pressed', String(+c.dataset.thought === i)));
+    bubbles.innerHTML = '';
+    const you = document.createElement('div'); you.className = 'bubble you'; you.textContent = THOUGHTS[i][0]; bubbles.appendChild(you);
+    emote('cry', 2.6);
+    ventTimers.push(setTimeout(() => { const t = document.createElement('div'); t.className = 'bubble lumi typing'; t.innerHTML = '<i></i><i></i><i></i>'; bubbles.appendChild(t); }, 700));
+    ventTimers.push(setTimeout(() => {
+      const t = $('.typing', bubbles); if (t) t.remove();
+      const l = document.createElement('div'); l.className = 'bubble lumi'; l.innerHTML = THOUGHTS[i][1]; bubbles.appendChild(l);
+      emote('laugh', 3);
+    }, 2300));
+    if (fromUser) restartVentLoop();
+  }
+  function restartVentLoop() { clearInterval(ventLoop); if (ventVisible && !reduceMotion) ventLoop = setInterval(() => showThought((ventIdx + 1) % THOUGHTS.length), 6400); }
+  chips.forEach(c => c.addEventListener('click', () => showThought(+c.dataset.thought, true)));
+  new IntersectionObserver(es => es.forEach(e => {
+    ventVisible = e.isIntersecting;
+    if (ventVisible) { showThought((ventIdx + 1) % THOUGHTS.length); restartVentLoop(); }
+    else { clearInterval(ventLoop); ventTimers.forEach(clearTimeout); }
+  }), { threshold: 0.55 }).observe($('.chat'));
+  // static first state so the chat is never empty at rest
+  bubbles.innerHTML = '<div class="bubble you">That rejection means I\'m behind.</div><div class="bubble lumi">Maybe the rejection is <span class="dream">redirection.</span> Let\'s look at where it\'s pointing you.</div>';
+
+  // ask for a sign
+  const SIGNS = [
+    'Watch the clock today. When you catch a repeating number, take the next step you\'ve been putting off.',
+    'The next conversation that surprises you holds an answer. Listen for it.',
+    'A door you thought was closed is worth one more knock this week.',
+    'Notice what keeps repeating. You already know what it\'s asking of you.',
+    'Say yes to the small invitation. It leads somewhere bigger.',
+    'Rest is part of the plan. Take the slower path today, on purpose.'
+  ];
+  let signI = -1; const signOut = $('#signOut');
+  $('#signBtn').addEventListener('click', () => {
+    signI = (signI + 1 + Math.floor(Math.random() * (SIGNS.length - 1))) % SIGNS.length;
+    signOut.textContent = SIGNS[signI]; signOut.classList.remove('flash'); void signOut.offsetWidth; signOut.classList.add('flash');
+    emote('excite', 3.2); if (lumiApi) lumiApi.burst();
+  });
+
+  // pricing tiers (only the 250-credit price is published; larger tiers show their savings)
+  const TIER_NOTE = {
+    250: '250 credits a month, about 31 full readings.',
+    500: '500 credits a month, about 62 full readings.',
+    1000: '1,000 credits a month, about 125 full readings. Save 5%.',
+    2000: '2,000 credits a month, about 250 full readings. Save 10%.'
+  };
+  $$('.tier').forEach(b => b.addEventListener('click', () => {
+    $$('.tier').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    $('#tierNote').textContent = TIER_NOTE[b.dataset.tier];
+  }));
+
+  /* ============ scroll model ============ */
+  // Lumi stops: every section, plus each step of the app tour
+  const stops = $$('[data-lumi]');
+  let marks = [], secTops = [], maxScroll = 1, vh = innerHeight, isMobile = innerWidth < 720;
+  const parse = s => s.split(',').map(Number);
+  const docTop = el => el.getBoundingClientRect().top + scrollY;
+  function measure() {
+    sizePhone();
+    vh = innerHeight; isMobile = innerWidth < 720;
+    maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
+    marks = stops.map((el, i) => {
+      const top = docTop(el), h = el.offsetHeight;
+      const a = i === 0 ? -1e9 : top - vh * 0.3;
+      const b = i === stops.length - 1 ? 1e9 : Math.max(a + 1, top + h - vh * 0.7);
+      let d = parse(el.dataset.lumi);
+      if (el.dataset.lumiPh && innerWidth > 880) {
+        // anchor to the phone's real position so Lumi floats beside it, never behind it
+        const [side, y, s] = parse(el.dataset.lumiPh), r = phoneBox.getBoundingClientRect();
+        const xpx = clamp(side > 0 ? r.right + 130 : r.left - 130, 90, innerWidth - 90);
+        d = [xpx / innerWidth * 2 - 1, y, s];
+      }
+      return { el, a, b, d, m: parse(el.dataset.lumiM), sky: el.dataset.sky, emote: el.dataset.emote };
+    });
+    secTops = sections.map(docTop);
+  }
+
+  /* ---- live phone ---- */
+  const steps = $$('.step'), screens = $$('#phone .screen'), tabs = $$('#pTabs span');
+  const phoneBox = $('#phoneBox'), phoneTilt = $('#phoneTilt'), phoneCap = $('#phoneCap'), tour = $('#app');
+  let phoneStep = -1, phoneScale = 1;
+  function sizePhone() {
+    const narrow = innerWidth <= 880;
+    const byH = narrow ? (innerHeight - 76 - 150) / 628 : (innerHeight - 70) / 628;
+    const byW = narrow ? (innerWidth * 0.6) / 300 : 1;
+    phoneScale = clamp(Math.min(byH, byW, 1), 0.5, 1);
+    phoneBox.style.width = 300 * phoneScale + 'px'; phoneBox.style.height = 628 * phoneScale + 'px';
+    $('.phone-col').style.top = narrow ? '' : `calc(50vh - ${314 * phoneScale}px)`;
+  }
+  function setPhone(i) {
+    if (i === phoneStep) return;
+    phoneStep = i;
+    screens.forEach((s, k) => { s.classList.toggle('on', k === i); s.classList.toggle('past', k < i); });
+    tabs.forEach((t, k) => t.classList.toggle('a', k === i));
+    steps.forEach((s, k) => s.classList.toggle('on', k === i));
+    const st = steps[i];
+    phoneCap.innerHTML = st.innerHTML; phoneCap.classList.remove('swap'); void phoneCap.offsetWidth; phoneCap.classList.add('swap');
+  }
+  const tilt = { x: 0, y: 0, tx: 0, ty: 0, px: 0, py: 0 };
+  addEventListener('pointermove', e => { tilt.px = e.clientX / innerWidth * 2 - 1; tilt.py = e.clientY / innerHeight * 2 - 1; }, { passive: true });
+  function phoneFrame() {
+    const r = tour.getBoundingClientRect();
+    if (r.bottom > -50 && r.top < innerHeight + 50) {
+      const p = clamp(-r.top / Math.max(1, r.height - innerHeight), 0, 1);
+      tilt.ty = lerp(-16, 12, p) + (reduceMotion ? 0 : tilt.px * 8);
+      tilt.tx = 6 - (reduceMotion ? 0 : tilt.py * 5) + Math.sin(p * Math.PI * 4) * 2;
+      tilt.x += (tilt.tx - tilt.x) * 0.08; tilt.y += (tilt.ty - tilt.y) * 0.08;
+      const bob = reduceMotion ? 0 : Math.sin(performance.now() / 900) * 4;
+      const k = 1 - phoneScale;
+      phoneTilt.style.transform = `translate(${(-150 * k).toFixed(1)}px, ${(-314 * k + bob).toFixed(1)}px) rotateX(${tilt.x.toFixed(2)}deg) rotateY(${tilt.y.toFixed(2)}deg) scale(${phoneScale})`;
+    }
+    requestAnimationFrame(phoneFrame);
+  }
+  requestAnimationFrame(phoneFrame);
+  setPhone(0);
+  function locate(y) {
+    for (let i = 0; i < marks.length; i++) {
+      if (y <= marks[i].b) {
+        if (y >= marks[i].a || i === 0) return { i0: i, i1: i, t: 0 };
+        return { i0: i - 1, i1: i, t: clamp((y - marks[i - 1].b) / (marks[i].a - marks[i - 1].b), 0, 1) };
+      }
+    }
+    const n = marks.length - 1; return { i0: n, i1: n, t: 0 };
+  }
+  measure();
+  addEventListener('load', measure);
+  new ResizeObserver(measure).observe(document.body);
+
+  let lastStop = -1, lastRail = -1, emoteTimer = null, lastScrollAt = 0;
+  const FALLBACK = ['laugh', 'excite'];
+  function onScroll() {
+    lastScrollAt = performance.now();
+    nav.classList.toggle('scrolled', scrollY > 30);
+    const L = locate(scrollY + 1); const cur = L.i0;
+    if (L.i0 === L.i1 && cur !== lastStop) {
+      // Lumi reacts at every stop it lands on
+      clearTimeout(emoteTimer);
+      if (lastStop !== -1 && marks[cur]) {
+        const name = marks[cur].emote || (marks[cur].el.id === 'vent' ? '' : FALLBACK[cur % 2]);
+        if (name) emoteTimer = setTimeout(() => emote(name), 420);
+      }
+      lastStop = cur;
+    }
+    let rs = 0; secTops.forEach((t, i) => { if (scrollY + vh * 0.5 >= t) rs = i; });
+    if (rs !== lastRail) { railDots.forEach((d, i) => d.classList.toggle('on', i === rs)); lastRail = rs; }
+    let ps = 0; steps.forEach((s, i) => { if (s.getBoundingClientRect().top < vh * 0.55) ps = i; });
+    setPhone(ps);
+  }
+  // when the reader pauses, Lumi still has a life of its own
+  setInterval(() => {
+    if (document.hidden || performance.now() - lastScrollAt < 7000) return;
+    if (lumiApi && !lumiApi.busy()) emote(['laugh', 'excite', 'laugh'][(Math.random() * 3) | 0], 2.8);
+  }, 9000);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  /* ============ 3D sky + Lumi ============ */
+  setTimeout(start3D, 30);
+  function start3D() {
+  if (typeof THREE === 'undefined') return;
+  const canvas = $('#sky');
+  let renderer;
+  try { renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' }); }
+  catch (e) { return; }
+  document.documentElement.classList.add('has-webgl');
+  const DPR_MAX = Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 1.75);
+  let dpr = DPR_MAX;
+  renderer.setPixelRatio(dpr);
+  renderer.setClearColor(0x0d0928, 1);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 400);
+  scene.add(camera);
+  const D = 9;               // Lumi's resting distance from the camera
+  const TRAVEL = 150;        // how far the camera flies over the whole page
+  const tanHalf = Math.tan(THREE.MathUtils.degToRad(20));
+
+  const NOISE = `
+    float hash(vec3 p){ p = fract(p*0.3183099 + 0.1); p *= 17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }
+    float vnoise(vec3 x){
+      vec3 i = floor(x); vec3 f = fract(x); f = f*f*(3.0-2.0*f);
+      return mix(mix(mix(hash(i+vec3(0,0,0)),hash(i+vec3(1,0,0)),f.x), mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),
+                 mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x), mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);
+    }
+    float fbm(vec3 p){ float a=0.5, s=0.0; for(int i=0;i<5;i++){ s+=a*vnoise(p); p=p*2.03+vec3(1.7,9.2,3.1); a*=0.5; } return s; }
+    float fbm3(vec3 p){ float a=0.5, s=0.0; for(int i=0;i<3;i++){ s+=a*vnoise(p); p=p*2.03+vec3(1.7,9.2,3.1); a*=0.5; } return s/0.875; }
+  `;
+
+  /* ---- sky palettes ---- */
+  const C = h => new THREE.Color(h);
+  const SKIES = {
+    dusk:    { top: C('#0d0928'), mid: C('#241a58'), bot: C('#5e4290'), cShade: C('#4b3b98'), cMid: C('#8e74d4'), cLit: C('#fde6fa'), cRim: C('#ffc2ec'), nA: C('#7b3fbe'), nB: C('#e0559f'), nC: C('#ffd0f2'), fog: C('#33276e'), stars: 0.55, moon: 0.45, neb: 0.6, ribbon: 0.0 },
+    dusk2:   { top: C('#0a0722'), mid: C('#1e164e'), bot: C('#4f3784'), cShade: C('#40318c'), cMid: C('#7d64c6'), cLit: C('#f2dcfa'), cRim: C('#ffb8e8'), nA: C('#5c3ab4'), nB: C('#c44aa6'), nC: C('#f6c2ff'), fog: C('#2c2366'), stars: 0.7, moon: 0.6, neb: 0.7, ribbon: 0.0 },
+    night:   { top: C('#030216'), mid: C('#0c0a30'), bot: C('#251d5c'), cShade: C('#251f68'), cMid: C('#5547aa'), cLit: C('#c9bdf4'), cRim: C('#b0c8ff'), nA: C('#2a3aa6'), nB: C('#6b3fcc'), nC: C('#a2e8ff'), fog: C('#191548'), stars: 1.0, moon: 1.0, neb: 1.0, ribbon: 0.0 },
+    aurora:  { top: C('#05041c'), mid: C('#141042'), bot: C('#342878'), cShade: C('#2d277a'), cMid: C('#6252ba'), cLit: C('#ddd0fb'), cRim: C('#a6f2ea'), nA: C('#2a64b0'), nB: C('#36bfb2'), nC: C('#c8fff2'), fog: C('#221d62'), stars: 0.9, moon: 0.75, neb: 0.9, ribbon: 0.75 },
+    sunrise: { top: C('#140f42'), mid: C('#3c2f86'), bot: C('#a06eac'), cShade: C('#6a54b0'), cMid: C('#b08cda'), cLit: C('#fff1f5'), cRim: C('#ffcdb0'), nA: C('#a8489c'), nB: C('#ff7f8e'), nC: C('#ffe0c4'), fog: C('#5a4a9a'), stars: 0.2, moon: 0.0, neb: 0.4, ribbon: 1.0 }
+  };
+  const sky = { top: new THREE.Color(), mid: new THREE.Color(), bot: new THREE.Color(), cShade: new THREE.Color(), cMid: new THREE.Color(), cLit: new THREE.Color(), cRim: new THREE.Color(), nA: new THREE.Color(), nB: new THREE.Color(), nC: new THREE.Color(), fog: new THREE.Color(), stars: 0, moon: 0, neb: 0, ribbon: 0 };
+  function mixSky(a, b, t) {
+    for (const k of ['top', 'mid', 'bot', 'cShade', 'cMid', 'cLit', 'cRim', 'nA', 'nB', 'nC', 'fog']) sky[k].copy(SKIES[a][k]).lerp(SKIES[b][k], t);
+    for (const k of ['stars', 'moon', 'neb', 'ribbon']) sky[k] = lerp(SKIES[a][k], SKIES[b][k], t);
+  }
+  mixSky('dusk', 'dusk', 0);
+
+  /* ---- nebula: painted at half resolution, it is soft enough not to need more ---- */
+  const nebRT = new THREE.WebGLRenderTarget(4, 4, { depthBuffer: false, stencilBuffer: false });
+  const nebScene = new THREE.Scene(), nebCam = new THREE.Camera();
+  const nebU = { uTop: { value: sky.top }, uMid: { value: sky.mid }, uBot: { value: sky.bot }, uA: { value: sky.nA }, uB: { value: sky.nB }, uC: { value: sky.nC },
+    uTime: { value: 0 }, uAspect: { value: 1 }, uScroll: { value: 0 }, uNeb: { value: 1 }, uDrift: { value: new THREE.Vector2() } };
+  const neb = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+    uniforms: nebU, depthWrite: false, depthTest: false,
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+    fragmentShader: `
+      uniform vec3 uTop, uMid, uBot, uA, uB, uC; uniform float uTime, uAspect, uScroll, uNeb; uniform vec2 uDrift; varying vec2 vUv;
+      ${NOISE}
+      void main(){
+        vec2 uv = vUv;
+        vec3 col = mix(uBot, uMid, smoothstep(0.0, 0.55, uv.y));
+        col = mix(col, uTop, smoothstep(0.5, 1.0, uv.y));
+        vec2 p = uv - 0.5; p.x *= uAspect;
+        // the nebula slides past as you scroll, and slowly breathes on its own
+        vec3 q = vec3(p * 1.25 + vec2(0.0, uScroll * 2.6) + uDrift, uTime * 0.012);
+        vec3 w = vec3(fbm(q + vec3(0.0, 0.0, 1.7)), fbm(q + vec3(5.2, 1.3, 2.1)), 0.0);
+        float gas = fbm(q + w * 1.7);
+        float fil = fbm(q * 2.3 + w * 2.6 + vec3(3.1, 0.7, 0.0));
+        float dust = fbm(q * 3.4 + w * 3.2 + vec3(7.0, 2.0, 0.0));
+        float g = smoothstep(0.36, 0.8, gas);
+        float f = smoothstep(0.42, 0.88, fil) * g;
+        float rid = 1.0 - abs(fil * 2.0 - 1.0);                    // thin bright ridges in the gas
+        col += uA * g * 0.8 * uNeb;
+        col += uB * f * 1.15 * uNeb;
+        col += uB * pow(rid, 6.0) * g * 0.35 * uNeb;
+        col *= 1.0 - smoothstep(0.48, 0.76, dust) * g * 0.62;     // dark dust lanes
+        col += uC * pow(f, 2.2) * 1.25 * uNeb;                     // glowing cores
+        col += uA * 0.07 * smoothstep(0.2, 0.9, w.x) * uNeb;       // faint haze everywhere
+        gl_FragColor = vec4(col, 1.0);
+      }`
+  }));
+  neb.frustumCulled = false; nebScene.add(neb);
+
+  /* ---- background sky ---- */
+  const bgU = { uTop: { value: sky.top }, uMid: { value: sky.mid }, uBot: { value: sky.bot }, uTime: { value: 0 }, uAspect: { value: 1 },
+    uMoon: { value: 0 }, uRibbon: { value: 0 }, uNeb: { value: 0 }, uLumi: { value: new THREE.Vector2(0.5, 0.6) }, uLumiCol: { value: new THREE.Color(0.42, 0.86, 1) }, uLumiR: { value: 0.25 }, uScroll: { value: 0 }, uNebTex: { value: nebRT.texture } };
+  const bg = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+    uniforms: bgU, depthWrite: false, depthTest: false,
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.9999, 1.0); }`,
+    fragmentShader: `
+      uniform vec3 uTop, uMid, uBot, uLumiCol; uniform float uTime, uAspect, uMoon, uRibbon, uNeb, uLumiR, uScroll; uniform vec2 uLumi; uniform sampler2D uNebTex; varying vec2 vUv;
+      ${NOISE}
+      void main(){
+        vec2 uv = vUv;
+        vec3 col = texture2D(uNebTex, uv).rgb;
+        vec2 p = uv - 0.5; p.x *= uAspect;
+        // Lumi's light washing into the sky
+        vec2 lp = uv - uLumi; lp.x *= uAspect; float lr = dot(lp, lp);
+        col += uLumiCol * exp(-lr / (uLumiR * uLumiR)) * 0.18;
+        // crescent moon
+        vec2 mc = vec2(0.5 + (uAspect > 1.0 ? 0.33 : 0.28) * uAspect, 0.86 - uScroll * 0.08);
+        vec2 mp = vec2((uv.x - 0.5) * uAspect + 0.5, uv.y) - mc;
+        float mr = 0.032;
+        float d1 = length(mp) - mr, d2 = length(mp - vec2(0.014, 0.009)) - mr * 0.9;
+        float cres = smoothstep(0.002, -0.002, d1) * smoothstep(-0.002, 0.002, d2);
+        col += vec3(1.0, 0.95, 0.86) * cres * uMoon * 0.95 + vec3(0.75, 0.7, 1.0) * exp(-length(mp) * 16.0) * 0.18 * uMoon;
+        // light ribbons
+        if (uRibbon > 0.001) {
+          for (int k = 0; k < 2; k++) {
+            float fk = float(k);
+            float x = p.x;
+            float cy = 0.16 + fk * 0.07 + 0.12 * sin(x * 1.3 + 0.7 + fk * 0.6 + uTime * 0.05) - x * 0.22;
+            float d = abs(p.y - cy);
+            float w = 0.012 + 0.018 * (0.5 + 0.5 * sin(x * 3.0 + fk));
+            float band = exp(-d * d / (w * w)) * 0.55 + exp(-d * d / (w * w * 9.0)) * 0.25;
+            float flow = 0.6 + 0.4 * sin(x * 6.0 - uTime * 0.8 + fk * 2.0);
+            vec3 rc = mix(vec3(1.0, 0.62, 0.86), vec3(0.55, 0.98, 0.95), smoothstep(-0.8, 0.8, x + fk * 0.4));
+            vec2 g = floor(vec2(x, p.y) * 260.0);
+            float spark = step(0.985, hash(vec3(g, fk))) * exp(-d * d / (w * w * 16.0)) * (0.5 + 0.5 * sin(uTime * 3.0 + hash(vec3(g, 3.0)) * 40.0));
+            col += rc * (band * flow + spark * 1.2) * uRibbon * (1.0 - smoothstep(0.75, 1.2, abs(x + 0.2)));
+          }
+        }
+        col += (hash(vec3(gl_FragCoord.xy, uTime)) - 0.5) / 255.0;
+        gl_FragColor = vec4(col, 1.0);
+      }`
+  }));
+  bg.frustumCulled = false; bg.renderOrder = -10; scene.add(bg);
+
+  /* ---- far stars (ride with the camera) ---- */
+  const starMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uPix: { value: 1 }, uAmt: { value: 0.5 } },
+    transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+    vertexShader: `attribute float aSeed; uniform float uTime, uPix, uAmt; varying float vA;
+      void main(){ vec4 mv = modelViewMatrix*vec4(position,1.0); gl_Position = projectionMatrix*mv;
+        vA = (0.25 + 0.75*aSeed*aSeed) * (0.55 + 0.45*sin(uTime*(0.4+aSeed) + aSeed*40.0)) * uAmt;
+        gl_PointSize = (1.2 + 2.4*aSeed*aSeed) * uPix; }`,
+    fragmentShader: `varying float vA; void main(){ float d = length(gl_PointCoord-0.5); float a = smoothstep(0.5,0.0,d);
+        gl_FragColor = vec4(mix(vec3(0.8,0.88,1.0), vec3(1.0,0.86,0.95), step(0.7, fract(vA*37.0))), a*vA); }`
+  });
+  {
+    const n = isMobile ? 900 : 1500, pos = new Float32Array(n * 3), seed = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      pos[i * 3] = (Math.random() - 0.5) * 420; pos[i * 3 + 1] = (Math.random() - 0.5) * 160 + 20; pos[i * 3 + 2] = -150;
+      seed[i] = Math.random();
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+    const stars = new THREE.Points(g, starMat); stars.renderOrder = -6; stars.frustumCulled = false; camera.add(stars);
+  }
+
+  /* ---- clouds: procedural atlas + instanced billboards ---- */
+  function cloudAtlas() {
+    const S = 448, COLS = 3, ROWS = 2, NV = COLS * ROWS;
+    const cv = document.createElement('canvas'); cv.width = S * COLS; cv.height = S * ROWS;
+    const ctx = cv.getContext('2d'), img = ctx.createImageData(cv.width, cv.height), px = img.data;
+    let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    const G = 64, grid = new Float32Array(G * G); for (let i = 0; i < grid.length; i++) grid[i] = rnd();
+    const vn = (x, y) => { const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+      const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+      const g = (a, b) => grid[((b % G + G) % G) * G + ((a % G + G) % G)];
+      return lerp(lerp(g(xi, yi), g(xi + 1, yi), u), lerp(g(xi, yi + 1), g(xi + 1, yi + 1), u), v); };
+    const hf = new Float32Array(S * S), sd = new Float32Array(S * S), warp = new Float32Array(S * S);
+    const L = [0.38, -0.72, 0.58]; const Ln = Math.hypot(...L); L[0] /= Ln; L[1] /= Ln; L[2] /= Ln;
+    for (let v = 0; v < NV; v++) {
+      hf.fill(0); sd.fill(-1);
+      for (let j = 0; j < S; j++) for (let i = 0; i < S; i++) { const x = i / S * 10 + v * 17, y = j / S * 10; warp[j * S + i] = vn(x, y) * 0.6 + vn(x * 2.3, y * 2.3) * 0.3 + vn(x * 5.1, y * 5.1) * 0.1 - 0.5; }
+      const base = 0.78 - rnd() * 0.05, H = 0.26 + rnd() * 0.34, x0 = 0.08 + rnd() * 0.08, x1 = 0.92 - rnd() * 0.08, skew = 0.6 + rnd() * 0.9;
+      const top = x => { const u = (x - x0) / (x1 - x0); if (u <= 0 || u >= 1) return base; return base - H * Math.pow(Math.sin(Math.PI * Math.pow(u, skew)), 0.75); };
+      const sph = [];
+      for (let i = 0; i < 6; i++) { const x = lerp(x0 + 0.12, x1 - 0.12, (i + rnd() * 0.6) / 6); const r = 0.11 + rnd() * 0.07; sph.push([x, Math.max(top(x) + r * 0.9, base - r * 0.45), r]); }
+      for (let i = 0; i < 7; i++) { const x = lerp(x0 + 0.1, x1 - 0.1, (i + rnd() * 0.6) / 7); const t = top(x); const r = Math.max(0.09, (base - t) * 0.55); sph.push([x, (t + base) * 0.5 + r * 0.25, r]); }   // fill the body so tall clouds stay solid
+      for (let i = 0; i < 13; i++) { const x = lerp(x0 + 0.03, x1 - 0.03, (i + rnd()) / 13); const r = 0.055 + rnd() * 0.05; sph.push([x, top(x) + r * (0.55 + rnd() * 0.3), r]); }
+      for (let i = 0; i < 7; i++) { const x = lerp(x0, x1, rnd()); const r = 0.032 + rnd() * 0.018; sph.push([x, top(x) + r * (0.45 + rnd() * 0.4), r]); }
+      for (const [cx, cy, r] of sph) {
+        const R = r * 1.3, i0 = Math.max(1, Math.floor((cx - R) * S)), i1 = Math.min(S - 2, Math.ceil((cx + R) * S)), j0 = Math.max(1, Math.floor((cy - R) * S)), j1 = Math.min(S - 2, Math.ceil((cy + R) * S));
+        const zc = r * 0.5 + (base - cy) * 0.35;
+        for (let j = j0; j <= j1; j++) for (let i = i0; i <= i1; i++) {
+          const k = j * S + i, x = (i + 0.5) / S, y = (j + 0.5) / S;
+          const rr = r * (1 + warp[k] * 0.22), dx = x - cx, dy = y - cy, d = Math.sqrt(dx * dx + dy * dy);
+          const e = rr - d; if (e > sd[k]) sd[k] = e;
+          if (e > 0) { const h = Math.sqrt(rr * rr - d * d) + zc; if (h > hf[k]) hf[k] = h; }
+        }
+      }
+      for (let pass = 0; pass < 3; pass++) {   // box-blur passes melt creases into soft, rounded puffs
+        for (let j = 0; j < S; j++) { let acc = 0; const row = j * S; const tmp = new Float32Array(S);
+          for (let i = -5; i < S + 5; i++) { const a2 = hf[row + clamp(i + 5, 0, S - 1)], b2 = hf[row + clamp(i - 6, 0, S - 1)]; acc += a2 - b2; if (i >= 0 && i < S) tmp[i] = acc / 11; }
+          hf.set(tmp, row); }
+        for (let i = 0; i < S; i++) { let acc = 0; const col = new Float32Array(S);
+          for (let j = -5; j < S + 5; j++) { acc += hf[clamp(j + 5, 0, S - 1) * S + i] - hf[clamp(j - 6, 0, S - 1) * S + i]; if (j >= 0 && j < S) col[j] = acc / 11; }
+          for (let j = 0; j < S; j++) hf[j * S + i] = col[j]; }
+      }
+      const ox = (v % COLS) * S, oy = Math.floor(v / COLS) * S;
+      for (let j = 1; j < S - 1; j++) for (let i = 1; i < S - 1; i++) {
+        const k = j * S + i, x = (i + 0.5) / S, y = (j + 0.5) / S;
+        const fine = vn(x * 30 + v * 5, y * 30) - 0.5;
+        let a = smooth(-7 / S, 9 / S, sd[k] + fine * 0.012);
+        a *= 1 - 0.9 * smooth(base - 0.07, base + 0.025, y + warp[k] * 0.03);   // misty, dissolving underside
+        a *= smooth(0, 0.03, Math.min(x, 1 - x, y, 1 - y));
+        let lit = 0, rim = 0;
+        if (a > 0.001) {
+          const nx = -(hf[k + 1] - hf[k - 1]) * S * 0.5, ny = -(hf[k + S] - hf[k - S]) * S * 0.5, nl = Math.hypot(nx, ny, 1);
+          const n0 = nx / nl, n1 = ny / nl, n2 = 1 / nl;
+          const dif = 0.5 + 0.5 * (n0 * L[0] + n1 * L[1] + n2 * L[2]);   // wrapped light: soft, scattered, never harsh
+          const ao = clamp(0.7 + hf[k] * 2.5, 0.7, 1);
+          const low = smooth(base - H * 0.6, base + 0.02, y);
+          lit = clamp(dif * dif * ao * (1 - 0.35 * low) + 0.06 * (1 - low), 0, 1);
+          rim = clamp(Math.pow(1 - n2, 2.2) * 1.3, 0, 1) * (1 - low) * smooth(0.1, 0.7, a);
+        }
+        const q = ((oy + j) * cv.width + ox + i) * 4;
+        px[q] = lit * 255; px[q + 1] = a * 255; px[q + 2] = rim * 255; px[q + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    const tex = new THREE.CanvasTexture(cv); tex.flipY = false; tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.anisotropy = 4;
+    return tex;
+  }
+  const NC = isMobile ? 70 : 100;
+  const cloudData = [];
+  {
+    let s = 3; const r = () => (s = (s * 16807) % 2147483647) / 2147483647;
+    for (let i = 0; i < NC; i++) {
+      const z = 12 - (i / NC) * (TRAVEL + 140) + (r() - 0.5) * 3;
+      const kind = r();
+      let x, y, w;
+      if (kind < 0.3) { x = (r() - 0.5) * 70; y = -9 - r() * 6; w = 22 + r() * 22; }                 // cloud sea below
+      else if (kind < 0.82) { const side = r() < 0.5 ? -1 : 1; x = side * (7 + r() * 18); y = -6 + r() * 11; w = 12 + r() * 14; } // banks at the edges
+      else if (z < -25) { x = (r() - 0.5) * 12; y = -3 + r() * 6; w = 10 + r() * 10; }
+      else { const side = r() < 0.5 ? -1 : 1; x = side * (10 + r() * 14); y = -4 + r() * 8; w = 12 + r() * 12; }   // keep the opening view open                           // drifting through the middle
+      cloudData.push({ x, y, z, w, h: w * (0.5 + r() * 0.22), v: Math.floor(r() * 6), flip: r() < 0.5 ? -1 : 1, seed: r(), a: 0.75 + r() * 0.25 });
+    }
+    cloudData.sort((p, q) => p.z - q.z); // far first: correct painter's order since the camera never turns
+  }
+  const cloudGeo = new THREE.InstancedBufferGeometry();
+  {
+    const base = new THREE.PlaneGeometry(1, 1);
+    cloudGeo.index = base.index; cloudGeo.setAttribute('position', base.attributes.position); cloudGeo.setAttribute('uv', base.attributes.uv);
+    const P = new Float32Array(NC * 3), Sz = new Float32Array(NC * 2), M = new Float32Array(NC * 4);
+    cloudData.forEach((c, i) => { P.set([c.x, c.y, c.z], i * 3); Sz.set([c.w, c.h], i * 2); M.set([c.v, c.flip, c.seed, c.a], i * 4); });
+    cloudGeo.setAttribute('iPos', new THREE.InstancedBufferAttribute(P, 3));
+    cloudGeo.setAttribute('iSize', new THREE.InstancedBufferAttribute(Sz, 2));
+    cloudGeo.setAttribute('iMisc', new THREE.InstancedBufferAttribute(M, 4));
+    cloudGeo.instanceCount = NC;
+  }
+  const CLOUDS = false;   // the cloud version is kept in lunaz-with-clouds.html
+  const cloudTex = CLOUDS ? cloudAtlas() : null;
+  const cloudU = { uMap: { value: cloudTex }, uTime: { value: 0 }, uLit: { value: sky.cLit }, uShade: { value: sky.cShade }, uMidC: { value: sky.cMid }, uRim: { value: sky.cRim }, uFog: { value: sky.fog },
+    uLumiV: { value: new THREE.Vector3() }, uLumiCol: { value: new THREE.Color(0.42, 0.86, 1) }, uSplit: { value: 0 }, uSide: { value: 1 }, uLumiPx: { value: new THREE.Vector3(0, 0, 100) } };
+  function cloudMaterial(side) {
+    return new THREE.ShaderMaterial({
+      uniforms: Object.assign({}, cloudU, { uSide: { value: side } }), transparent: true, depthWrite: false, depthTest: false,
+      vertexShader: `
+        attribute vec3 iPos; attribute vec2 iSize; attribute vec4 iMisc;
+        uniform float uTime, uSplit, uSide; uniform vec3 uLumiV;
+        varying vec2 vUv; varying float vA, vGlow, vDepth;
+        void main(){
+          // uSide 1 draws clouds behind Lumi, -1 draws those in front
+          if ((iPos.z - uSplit) * uSide > 0.0) { gl_Position = vec4(2.0, 2.0, 2.0, 1.0); return; }
+          vec3 wp = iPos;
+          wp.x += sin(uTime * 0.04 + iMisc.z * 20.0) * 1.6;
+          wp.y += sin(uTime * 0.15 + iMisc.z * 10.0) * 0.25;
+          vec4 mv = modelViewMatrix * vec4(wp, 1.0);
+          float depth = -mv.z;
+          mv.xy += position.xy * iSize * (1.0 + 0.03 * sin(uTime * 0.3 + iMisc.z * 30.0));
+          gl_Position = projectionMatrix * mv;
+          vec2 tuv = uv; if (iMisc.y < 0.0) tuv.x = 1.0 - tuv.x; tuv.y = 1.0 - tuv.y;
+          vUv = tuv * vec2(1.0 / 3.0, 0.5) + vec2(mod(iMisc.x, 3.0) / 3.0, floor(iMisc.x / 3.0) * 0.5);
+          vDepth = depth;
+          vA = smoothstep(1.0, 8.0, depth) * (1.0 - smoothstep(120.0, 160.0, depth)) * iMisc.w;
+          vec3 dl = mv.xyz - uLumiV; vGlow = exp(-dot(dl, dl) / 40.0);
+        }`,
+      fragmentShader: `
+        uniform sampler2D uMap; uniform vec3 uLit, uShade, uMidC, uRim, uFog, uLumiCol, uLumiPx; uniform float uSide; varying vec2 vUv; varying float vA, vGlow, vDepth;
+        void main(){
+          vec4 t = texture2D(uMap, vUv);
+          float a = t.g * vA;
+          if (uSide < 0.0) { float dl = length(gl_FragCoord.xy - uLumiPx.xy) / uLumiPx.z; a *= mix(0.22, 1.0, smoothstep(0.7, 2.4, dl)); }
+          if (a < 0.004) discard;
+          float l = t.r;
+          vec3 c = mix(uShade, uMidC, smoothstep(0.0, 0.5, l));
+          c = mix(c, uLit, smoothstep(0.45, 1.0, l));
+          c += uRim * t.b * 0.55;                          // silver lining where light scatters through the edge
+          c += uLit * 0.08 * smoothstep(0.6, 1.0, l);      // soft bloom on the sunlit tops
+          c += uLumiCol * vGlow * (0.18 + 0.5 * l);
+          c = mix(c, uFog, smoothstep(30.0, 150.0, vDepth) * 0.75);
+          gl_FragColor = vec4(c, a);
+        }`
+    });
+  }
+  const cloudMats = [];
+  if (CLOUDS) {
+  const cloudsBack = new THREE.Mesh(cloudGeo, cloudMaterial(1)); cloudsBack.frustumCulled = false; cloudsBack.renderOrder = -2; scene.add(cloudsBack);
+  const cloudsFront = new THREE.Mesh(cloudGeo, cloudMaterial(-1)); cloudsFront.frustumCulled = false; cloudsFront.renderOrder = 8; scene.add(cloudsFront);
+  cloudMats.push(cloudsBack.material, cloudsFront.material);
+  }
+
+  /* ---- gold stars floating among the clouds ---- */
+  const goldU = { uTime: { value: 0 }, uPix: { value: 1 }, uScale: { value: 500 } };
+  {
+    const n = isMobile ? 46 : 70, pos = new Float32Array(n * 3), seed = new Float32Array(n), size = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const side = Math.random() < 0.5 ? -1 : 1;
+      pos[i * 3] = side * (2.5 + Math.random() * 13); pos[i * 3 + 1] = -4 + Math.random() * 9; pos[i * 3 + 2] = 4 - Math.random() * (TRAVEL + 60);
+      seed[i] = Math.random(); size[i] = 0.18 + Math.pow(Math.random(), 2) * 0.32;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1)); g.setAttribute('aSize', new THREE.BufferAttribute(size, 1));
+    const m = new THREE.ShaderMaterial({
+      uniforms: goldU, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+      vertexShader: `attribute float aSeed, aSize; uniform float uTime, uPix, uScale; varying float vA, vRot;
+        void main(){ vec3 p = position; p.y += sin(uTime * 0.6 + aSeed * 30.0) * 0.25;
+          vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+          float d = -mv.z; vA = smoothstep(0.8, 4.0, d) * (1.0 - smoothstep(60.0, 90.0, d)) * (0.75 + 0.25 * sin(uTime * 2.0 + aSeed * 50.0));
+          vRot = uTime * (0.2 + aSeed * 0.3) + aSeed * 6.0;
+          gl_PointSize = min(aSize * uScale * 3.2 / d, 160.0 * uPix); }`,
+      fragmentShader: `varying float vA, vRot;
+        float sdStar5(vec2 p, float r, float rf){
+          const vec2 k1 = vec2(0.809016994375, -0.587785252292); const vec2 k2 = vec2(-k1.x, k1.y);
+          p.x = abs(p.x); p -= 2.0 * max(dot(k1, p), 0.0) * k1; p -= 2.0 * max(dot(k2, p), 0.0) * k2; p.x = abs(p.x); p.y -= r;
+          vec2 ba = rf * vec2(-k1.y, k1.x) - vec2(0, 1); float h = clamp(dot(p, ba) / dot(ba, ba), 0.0, r);
+          return length(p - ba * h) * sign(p.y * ba.x - p.x * ba.y); }
+        void main(){
+          vec2 q = (gl_PointCoord - 0.5) * 2.0; q.y = -q.y; float c = cos(vRot), s = sin(vRot); q = mat2(c, -s, s, c) * q;
+          float d = sdStar5(q, 0.34, 0.5) - 0.06;
+          float body = 1.0 - smoothstep(-0.02, 0.03, d);
+          float glow = exp(-max(d, 0.0) * 9.0) * 0.6;
+          vec3 col = mix(vec3(1.0, 0.72, 0.36), vec3(1.0, 0.95, 0.8), body * smoothstep(0.1, -0.2, d));
+          gl_FragColor = vec4(col, (body * 0.9 + glow) * vA); }`
+    });
+    const goldStars = new THREE.Points(g, m); goldStars.frustumCulled = false; goldStars.renderOrder = 0; scene.add(goldStars);
+  }
+
+  /* ---- dust motes that wrap around the camera ---- */
+  const dustU = { uTime: { value: 0 }, uPix: { value: 1 }, uCam: { value: new THREE.Vector3() }, uAmt: { value: 1 } };
+  {
+    const n = isMobile ? 220 : 380, pos = new Float32Array(n * 3), seed = new Float32Array(n);
+    for (let i = 0; i < n; i++) { pos[i * 3] = (Math.random() - 0.5) * 30; pos[i * 3 + 1] = (Math.random() - 0.5) * 18; pos[i * 3 + 2] = (Math.random() - 0.5) * 40; seed[i] = Math.random(); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1));
+    const m = new THREE.ShaderMaterial({
+      uniforms: dustU, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+      vertexShader: `attribute float aSeed; uniform float uTime, uPix, uAmt; uniform vec3 uCam; varying float vA;
+        void main(){ vec3 box = vec3(30.0, 18.0, 40.0);
+          vec3 p = position + vec3(sin(uTime * 0.2 + aSeed * 20.0) * 0.6, uTime * (0.08 + aSeed * 0.12), 0.0);
+          vec3 c = uCam + vec3(0.0, 0.0, -18.0);
+          p = mod(p - c + box * 0.5, box) - box * 0.5 + c;
+          vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+          float d = -mv.z; vA = smoothstep(1.0, 4.0, d) * (1.0 - smoothstep(26.0, 38.0, d)) * (0.4 + 0.6 * sin(uTime * (1.0 + aSeed * 2.0) + aSeed * 30.0) * 0.5 + 0.3) * uAmt;
+          gl_PointSize = (1.0 + aSeed * 2.6) * uPix * (14.0 / max(d, 1.0)) + 1.0; }`,
+      fragmentShader: `varying float vA; void main(){ float d = length(gl_PointCoord - 0.5); float a = exp(-d * d * 22.0);
+        gl_FragColor = vec4(vec3(1.0, 0.92, 0.98), a * vA * 0.8); }`
+    });
+    const dust = new THREE.Points(g, m); dust.frustumCulled = false; dust.renderOrder = 9; scene.add(dust);
+  }
+
+  /* ============ Lumi (ported from the original spirit scene) ============ */
+  const spirit = new THREE.Group(); scene.add(spirit);
+  const orbUniforms = { uTime: { value: 0 }, uColor: { value: new THREE.Color(0.42, 0.86, 1.0) }, uBright: { value: 1 }, uFlow: { value: 0 }, uSwirl: { value: 0 } };
+  const orb = new THREE.Mesh(new THREE.PlaneGeometry(7, 7), new THREE.ShaderMaterial({
+    uniforms: orbUniforms, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+    vertexShader: `varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader: `
+      uniform float uTime, uBright, uFlow, uSwirl; uniform vec3 uColor; varying vec2 vP;
+      ${NOISE}
+      vec3 rotY(vec3 v, float a){ float c=cos(a), s=sin(a); return vec3(c*v.x+s*v.z, v.y, -s*v.x+c*v.z); }
+      void main(){
+        float r = length(vP);
+        float halo = exp(-pow(max(r-0.7, 0.0), 1.1) * 2.2) * 0.34 + exp(-r*r*0.3) * 0.07;
+        if (r > 3.45) discard;
+        float inside = smoothstep(1.12, 0.62, r);
+        vec3 col = uColor * halo;
+        if (inside > 0.0 || r < 1.15) {
+          vec3 n = vec3(vP, sqrt(max(0.0, 1.0 - min(r*r, 1.0))));
+          vec3 q = rotY(n, uFlow*0.35);
+          float warp = fbm(q*1.6 + vec3(0.0, uFlow*0.25, 0.0));
+          float cloud = fbm(q*2.1 + warp*1.4 + vec3(uFlow*0.12, 0.0, uSwirl));
+          float puffs = smoothstep(0.5, 0.86, cloud);
+          float veil = smoothstep(0.3, 0.7, warp);
+          float rim = smoothstep(0.7, 0.97, r) * (1.0 - smoothstep(0.97, 1.12, r));
+          float core = exp(-r*r*3.2);
+          col += uColor * inside * (0.22 + 0.5*cloud*veil + 0.15*cloud);
+          col += mix(uColor, vec3(1.0), 0.7) * inside * puffs * 1.25;
+          col += mix(uColor, vec3(1.0), 0.6) * core * 0.55;
+          col += uColor * rim * 0.4;
+        }
+        col *= uBright;
+        col = col / (1.0 + col*0.42);
+        gl_FragColor = vec4(col, 1.0);
+      }`
+  }));
+  orb.renderOrder = 1; spirit.add(orb);
+  const backing = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 3.2), new THREE.ShaderMaterial({
+    uniforms: { uA: { value: 0.3 } }, transparent: true, depthWrite: false, depthTest: false,
+    vertexShader: `varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader: `uniform float uA; varying vec2 vP; void main(){ float r = length(vP); gl_FragColor = vec4(0.04, 0.06, 0.2, uA * (1.0 - smoothstep(0.55, 1.5, r))); }`
+  }));
+  backing.renderOrder = 0.9; spirit.add(backing);
+
+  const faceUniforms = { uLaugh: { value: 0 }, uCry: { value: 0 }, uExcite: { value: 0 }, uBlink: { value: 0 }, uMouth: { value: 0 }, uBlush: { value: 0 }, uLook: { value: new THREE.Vector2() }, uTime: { value: 0 } };
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(1.4, 0.9), new THREE.ShaderMaterial({
+    uniforms: faceUniforms, transparent: true, depthWrite: false, depthTest: false,
+    vertexShader: `varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader: `
+      uniform float uLaugh, uCry, uExcite, uBlink, uMouth, uBlush, uTime; uniform vec2 uLook; varying vec2 vP;
+      float sdEllipse(vec2 p, vec2 ab){ return (length(p/ab) - 1.0) * min(ab.x, ab.y); }
+      float sdArcUp(vec2 p, vec2 c, float r, float th){ vec2 d = p - c; return d.y > 0.0 ? abs(length(d) - r) - th : min(length(d - vec2(r,0.0)), length(d + vec2(r,0.0))) - th; }
+      float star(vec2 p, float s){ p = abs(p); return (pow(p.x, 0.5) + pow(p.y, 0.5)) - pow(s, 0.5); }
+      vec2 ab(){ vec2 e = vec2(0.082, 0.118) * (1.0 + 0.28*uExcite); e.y *= mix(1.0, 0.07, uBlink*(1.0-uLaugh)); return e; }
+      float eyeShape(vec2 p, float side){
+        vec2 e = ab(); float dE = sdEllipse(p, e); float xo = p.x * side;
+        float lid = (p.y - (0.06 - 0.32*xo)) * 0.9; dE = mix(dE, max(dE, lid), uCry);
+        float dA = sdArcUp(p, vec2(0.0, -0.045), 0.072, 0.021); return mix(dE, dA, uLaugh);
+      }
+      void main(){
+        vec2 P = vP - uLook; float aa = 0.0085; vec3 ink = vec3(0.02, 0.03, 0.07);
+        vec3 col = vec3(0.0); float alpha = 0.0; float bl = 0.0;
+        for (int i = 0; i < 2; i++) { float s = i==0 ? -1.0 : 1.0; vec2 c = vec2(0.34*s, -0.14); bl += exp(-dot(P-c, P-c) / 0.0045); }
+        bl *= uBlush * 0.42; col = vec3(1.0, 0.58, 0.78); alpha = bl;
+        float dark = 0.0; vec3 shine = vec3(0.0); float shineA = 0.0;
+        for (int i = 0; i < 2; i++) {
+          float s = i==0 ? -1.0 : 1.0; vec2 p = P - vec2(0.205*s, 0.03);
+          float d = eyeShape(p, s); float m = 1.0 - smoothstep(-aa, aa, d); dark = max(dark, m);
+          vec2 e = ab(); float vis = (1.0 - uLaugh) * (1.0 - smoothstep(0.35, 0.8, uBlink));
+          vec2 h1 = p - vec2(0.028, 0.045) * (e / vec2(0.082, 0.118)) - vec2(0.0, -0.035*uCry);
+          float r1 = mix(0.024, 0.03, uCry) + 0.006*uCry*sin(uTime*6.0 + s);
+          float g1 = 1.0 - smoothstep(r1 - aa, r1 + aa, length(h1));
+          float st = 1.0 - smoothstep(-0.004, 0.004, star((p - vec2(0.03, 0.045)) * mat2(cos(uTime*1.2), -sin(uTime*1.2), sin(uTime*1.2), cos(uTime*1.2)), 0.068));
+          g1 = mix(g1, max(g1*0.6, st), uExcite);
+          float g2 = 1.0 - smoothstep(0.011 - aa, 0.011 + aa, length(p - vec2(-0.03, -0.05) * (e / vec2(0.082, 0.118))));
+          float pool = smoothstep(-0.02, -0.07, p.y) * uCry * (0.55 + 0.25*sin(uTime*3.0 + p.x*40.0));
+          float g = max(max(g1, g2*0.9), 0.0) * vis * m;
+          shine += vec3(1.0) * g + vec3(0.35, 0.7, 1.0) * pool * m * (1.0 - g); shineA = max(shineA, max(g, pool*m));
+        }
+        vec2 mp = P - vec2(0.0, -0.13);
+        float open = max(uLaugh * (0.6 + 0.4*uMouth), uExcite * 0.85); float rs = 0.074 * open;
+        float dSmile = max(length(mp - vec2(0.0, 0.02)) - rs, mp.y - 0.02); dSmile = mix(1.0, dSmile, step(0.014, rs));
+        vec2 fp = mp + vec2(0.0, 0.004*sin(uTime*9.0)*uCry);
+        float dFrown = sdArcUp(fp, vec2(0.0, -0.04), 0.042, 0.011 * uCry); dFrown = mix(1.0, dFrown, step(0.05, uCry));
+        // a small resting smile so Lumi always looks friendly
+        float dRest = sdArcUp(vec2(mp.x, -mp.y) , vec2(0.0, -0.035), 0.03, 0.008);
+        dRest = mix(1.0, dRest, (1.0 - uCry) * (1.0 - step(0.014, rs)));
+        float mouth = 1.0 - smoothstep(-aa, aa, min(min(dSmile, dFrown), dRest)); dark = max(dark, mouth);
+        vec3 eyeCol = mix(ink, shine / max(shineA, 1e-3), shineA);
+        float outA = dark + bl * (1.0 - dark);
+        vec3 outC = (eyeCol * dark + col * bl * (1.0 - dark)) / max(outA, 1e-4);
+        gl_FragColor = vec4(outC, outA);
+      }`
+  }));
+  face.position.set(0, -0.02, 1.0); face.renderOrder = 4; spirit.add(face);
+
+  const TENDRILS = 34, SEG = 44;
+  const tPos = new Float32Array(TENDRILS * (SEG - 1) * 2 * 3), tCol = new Float32Array(TENDRILS * (SEG - 1) * 2 * 3);
+  const tendrilGeo = new THREE.BufferGeometry();
+  tendrilGeo.setAttribute('position', new THREE.BufferAttribute(tPos, 3).setUsage(THREE.DynamicDrawUsage));
+  tendrilGeo.setAttribute('color', new THREE.BufferAttribute(tCol, 3).setUsage(THREE.DynamicDrawUsage));
+  const tendrils = new THREE.LineSegments(tendrilGeo, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.36, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
+  tendrils.frustumCulled = false; tendrils.renderOrder = 2; spirit.add(tendrils);
+  const tParams = [];
+  for (let i = 0; i < TENDRILS; i++) tParams.push({
+    lat0: Math.asin(Math.random() * 2 - 1) * 0.92, lon0: Math.random() * Math.PI * 2, dl: (0.035 + Math.random() * 0.05) * (Math.random() < 0.5 ? -1 : 1),
+    A: 0.15 + Math.random() * 0.45, f1: 0.6 + Math.random() * 1.6, s1: 0.15 + Math.random() * 0.35, ph: Math.random() * 100, rB: 0.98 + Math.pow(Math.random(), 1.8) * 0.5,
+    curl: 14 + Math.random() * 16, curlA: 0.02 + Math.random() * 0.05, b: 0.45 + Math.random() * 0.55 });
+  const tmpV = new THREE.Vector3();
+  function updateTendrils(t, flow, bright, droop, col, spread) {
+    let k = 0; const rotA = flow * 0.12, ca = Math.cos(rotA), sa = Math.sin(rotA);
+    for (let i = 0; i < TENDRILS; i++) {
+      const P = tParams[i]; let px, py, pz, pb;
+      for (let j = 0; j < SEG; j++) {
+        const u = j / (SEG - 1);
+        const lat = P.lat0 + P.A * Math.sin(u * P.f1 * Math.PI + flow * P.s1 + P.ph) + P.curlA * Math.sin(u * P.curl + flow * 1.3 + P.ph) - droop * 0.25 * u;
+        const lon = P.lon0 + j * P.dl * (1 + spread * 0.8) + 0.3 * Math.sin(flow * 0.21 + P.ph) + P.curlA * Math.cos(u * P.curl + flow * 1.3 + P.ph);
+        const r = (P.rB + 0.07 * Math.sin(u * 6.0 + flow * 0.7 + P.ph)) * (1 + spread * 0.25 * u);
+        let x = r * Math.cos(lat) * Math.cos(lon), y = r * Math.sin(lat), z = r * Math.cos(lat) * Math.sin(lon);
+        const xr = ca * x + sa * z; z = -sa * x + ca * z; x = xr;
+        const fade = Math.pow(Math.sin(Math.PI * u), 1.4);
+        const depth = 0.25 + 0.75 * Math.min(1, Math.max(0, (z + 1.2) / 2.4));
+        const flick = 0.75 + 0.25 * Math.sin(t * 1.7 + P.ph + u * 9.0);
+        const b = fade * depth * flick * P.b * bright;
+        if (j > 0) {
+          tPos[k * 3] = px; tPos[k * 3 + 1] = py; tPos[k * 3 + 2] = pz; tCol[k * 3] = col.r * pb; tCol[k * 3 + 1] = col.g * pb; tCol[k * 3 + 2] = col.b * pb; k++;
+          tPos[k * 3] = x; tPos[k * 3 + 1] = y; tPos[k * 3 + 2] = z; tCol[k * 3] = col.r * b; tCol[k * 3 + 1] = col.g * b; tCol[k * 3 + 2] = col.b * b; k++;
+        }
+        px = x; py = y; pz = z; pb = b;
+      }
+    }
+    tendrilGeo.attributes.position.needsUpdate = true; tendrilGeo.attributes.color.needsUpdate = true;
+  }
+
+  const sparkUniforms = { uOrbit: { value: 0 }, uClock: { value: 0 }, uSpread: { value: 1 }, uFall: { value: 0 }, uJitter: { value: 0 }, uBright: { value: 1 }, uPix: { value: 1 }, uColor: { value: new THREE.Color(0.55, 0.92, 1.0) } };
+  {
+    const n = 420, base = new Float32Array(n * 3), axis = new Float32Array(n * 3), sp = new Float32Array(n), ph = new Float32Array(n), sz = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      tmpV.set(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).normalize();
+      const r = 1.0 + Math.pow(Math.random(), 1.7) * 1.35;
+      base[i * 3] = tmpV.x * r; base[i * 3 + 1] = tmpV.y * r; base[i * 3 + 2] = tmpV.z * r;
+      const ax = new THREE.Vector3(Math.random() * 2 - 1, Math.random() * 2 - 1, Math.random() * 2 - 1).cross(tmpV).normalize();
+      axis[i * 3] = ax.x; axis[i * 3 + 1] = ax.y; axis[i * 3 + 2] = ax.z;
+      sp[i] = (0.05 + Math.random() * 0.18) * (Math.random() < 0.5 ? -1 : 1); ph[i] = Math.random() * 6.283; sz[i] = 0.6 + Math.pow(Math.random(), 3.0) * 2.4;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(base, 3)); g.setAttribute('aAxis', new THREE.BufferAttribute(axis, 3));
+    g.setAttribute('aSpeed', new THREE.BufferAttribute(sp, 1)); g.setAttribute('aPhase', new THREE.BufferAttribute(ph, 1)); g.setAttribute('aSize', new THREE.BufferAttribute(sz, 1));
+    const m = new THREE.ShaderMaterial({
+      uniforms: sparkUniforms, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+      vertexShader: `
+        attribute vec3 aAxis; attribute float aSpeed, aPhase, aSize;
+        uniform float uOrbit, uClock, uSpread, uFall, uJitter, uBright, uPix; varying float vA;
+        vec3 rot(vec3 v, vec3 k, float a){ return v*cos(a) + cross(k,v)*sin(a) + k*dot(k,v)*(1.0-cos(a)); }
+        void main(){
+          vec3 p = rot(position, aAxis, aPhase + uOrbit*aSpeed);
+          float rr = length(p); p *= mix(1.0, uSpread, smoothstep(0.9, 1.6, rr));
+          p += uJitter * 0.05 * vec3(sin(uClock*21.0 + aPhase*7.0), cos(uClock*17.0 + aPhase*5.0), 0.0);
+          float f = fract(aPhase*0.37 + uClock*0.16); p.y -= uFall * f * 1.7;
+          vec4 mv = modelViewMatrix * vec4(p, 1.0); gl_Position = projectionMatrix * mv;
+          float tw = 0.5 + 0.5*sin(uClock*(0.8 + abs(aSpeed)*9.0) + aPhase*13.0);
+          vA = (0.45 + 0.75*tw) * uBright * mix(1.0, sin(3.14159*f), uFall) * (0.45 + 0.55*smoothstep(-2.0, 2.0, p.z));
+          gl_PointSize = aSize * uPix * (7.0 / -mv.z) * (0.75 + 0.45*tw) * 4.6;
+        }`,
+      fragmentShader: `uniform vec3 uColor; varying float vA;
+        void main(){ float d = length(gl_PointCoord - 0.5); float a = exp(-d*d*38.0) + 0.6*smoothstep(0.12, 0.0, d);
+          gl_FragColor = vec4(mix(uColor, vec3(1.0), 0.35*smoothstep(0.15, 0.0, d)), a * vA); }`
+    });
+    const sparks = new THREE.Points(g, m); sparks.frustumCulled = false; sparks.renderOrder = 3; spirit.add(sparks);
+  }
+
+  // emitted effects in world space: tears, giggles, stars, and the trail Lumi leaves while flying
+  const FX = 420;
+  const fx = { pos: new Float32Array(FX * 3), vel: new Float32Array(FX * 3), life: new Float32Array(FX).fill(1), max: new Float32Array(FX).fill(1),
+    col: new Float32Array(FX * 3), size: new Float32Array(FX), shape: new Float32Array(FX), alpha: new Float32Array(FX), rot: new Float32Array(FX),
+    drag: new Float32Array(FX), grav: new Float32Array(FX), cursor: 0 };
+  const fxGeo = new THREE.BufferGeometry();
+  fxGeo.setAttribute('position', new THREE.BufferAttribute(fx.pos, 3).setUsage(THREE.DynamicDrawUsage));
+  fxGeo.setAttribute('aCol', new THREE.BufferAttribute(fx.col, 3).setUsage(THREE.DynamicDrawUsage));
+  fxGeo.setAttribute('aSize', new THREE.BufferAttribute(fx.size, 1).setUsage(THREE.DynamicDrawUsage));
+  fxGeo.setAttribute('aShape', new THREE.BufferAttribute(fx.shape, 1).setUsage(THREE.DynamicDrawUsage));
+  fxGeo.setAttribute('aAlpha', new THREE.BufferAttribute(fx.alpha, 1).setUsage(THREE.DynamicDrawUsage));
+  fxGeo.setAttribute('aRot', new THREE.BufferAttribute(fx.rot, 1).setUsage(THREE.DynamicDrawUsage));
+  const fxMat = new THREE.ShaderMaterial({
+    uniforms: { uPix: { value: 1 } }, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
+    vertexShader: `attribute vec3 aCol; attribute float aSize, aShape, aAlpha, aRot; uniform float uPix; varying vec3 vCol; varying float vShape, vAlpha, vRot;
+      void main(){ vCol = aCol; vShape = aShape; vAlpha = aAlpha; vRot = aRot; vec4 mv = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mv;
+        gl_PointSize = aAlpha > 0.0 ? min(aSize * uPix * (7.0 / max(-mv.z, 0.5)) * 17.0, 180.0 * uPix) : 0.0; }`,
+    fragmentShader: `varying vec3 vCol; varying float vShape, vAlpha, vRot;
+      void main(){ vec2 q = (gl_PointCoord - 0.5) * 2.0; q.y = -q.y; float a;
+        if (vShape < 0.5) { a = exp(-dot(q,q)*5.0); }
+        else if (vShape < 1.5) { float w = 0.5 * (1.0 - smoothstep(-0.05, 1.0, q.y)) + 0.05; float body = 1.0 - smoothstep(w - 0.12, w + 0.02, abs(q.x));
+          body *= smoothstep(-0.85, -0.55, q.y) * (1.0 - smoothstep(0.85, 0.98, q.y)); float glint = exp(-dot(q - vec2(-0.12, -0.25), q - vec2(-0.12, -0.25)) * 60.0);
+          a = body * 0.85 + glint * 0.6 + exp(-dot(q,q)*3.0)*0.2; }
+        else { float c = cos(vRot), s = sin(vRot); q = mat2(c, -s, s, c) * q;
+          a = exp(-dot(q,q)*14.0) + 0.9*max(exp(-abs(q.x)*22.0)*exp(-abs(q.y)*2.6), exp(-abs(q.y)*22.0)*exp(-abs(q.x)*2.6)); }
+        gl_FragColor = vec4(vCol, a * vAlpha); }`
+  });
+  const fxPoints = new THREE.Points(fxGeo, fxMat); fxPoints.frustumCulled = false; fxPoints.renderOrder = 5; scene.add(fxPoints);
+  let fxDirty = false;
+  function emit(p, v, o) {
+    const i = fx.cursor; fx.cursor = (fx.cursor + 1) % FX;
+    fx.pos[i * 3] = p.x; fx.pos[i * 3 + 1] = p.y; fx.pos[i * 3 + 2] = p.z; fx.vel[i * 3] = v.x; fx.vel[i * 3 + 1] = v.y; fx.vel[i * 3 + 2] = v.z;
+    fx.life[i] = 0; fx.max[i] = o.life; fx.size[i] = o.size; fx.shape[i] = o.shape; fx.col[i * 3] = o.color.r; fx.col[i * 3 + 1] = o.color.g; fx.col[i * 3 + 2] = o.color.b;
+    fx.rot[i] = Math.random() * 3; fx.drag[i] = o.drag || 0; fx.grav[i] = o.grav || 0; fxDirty = true;
+  }
+  function updateFx(dt) {
+    for (let i = 0; i < FX; i++) {
+      if (fx.life[i] >= fx.max[i]) { fx.alpha[i] = 0; continue; }
+      fx.life[i] += dt; const k = Math.exp(-fx.drag[i] * dt);
+      fx.vel[i * 3] *= k; fx.vel[i * 3 + 1] = fx.vel[i * 3 + 1] * k + fx.grav[i] * dt; fx.vel[i * 3 + 2] *= k;
+      fx.pos[i * 3] += fx.vel[i * 3] * dt; fx.pos[i * 3 + 1] += fx.vel[i * 3 + 1] * dt; fx.pos[i * 3 + 2] += fx.vel[i * 3 + 2] * dt;
+      const u = fx.life[i] / fx.max[i]; fx.alpha[i] = Math.min(1, u * 6) * Math.pow(1 - u, 1.3); fx.rot[i] += dt * 0.8;
+    }
+    const A = fxGeo.attributes; A.position.needsUpdate = true; A.aAlpha.needsUpdate = true; A.aRot.needsUpdate = true;
+    if (fxDirty) { A.aCol.needsUpdate = true; A.aSize.needsUpdate = true; A.aShape.needsUpdate = true; fxDirty = false; }
+  }
+
+  /* ---- emotions ---- */
+  const EMOTES = { laugh: 3.8, cry: 5.4, excite: 3.8 };
+  const weight = { laugh: 0, cry: 0, excite: 0 };
+  let active = null, activeT = 0, activeDur = 0;
+  function play(name, dur) { if (!EMOTES[name]) return; active = name; activeT = 0; activeDur = dur || EMOTES[name]; if (name === 'excite') burst(); }
+  function envelope(t, dur) { return smooth(0, 0.7, t) * (1 - smooth(dur - 1.1, dur, t)); }
+  const cIdle = new THREE.Color(0.40, 0.85, 1.0), cLaugh = new THREE.Color(0.55, 0.93, 1.0), cCry = new THREE.Color(0.30, 0.55, 1.0), cExcite = new THREE.Color(0.50, 0.95, 1.0);
+  const tint = new THREE.Color(), tmpC = new THREE.Color(), white = new THREE.Color(1, 1, 1);
+  const starColors = [new THREE.Color(0.75, 0.97, 1.0), new THREE.Color(1.0, 0.85, 0.55), new THREE.Color(1.0, 0.8, 0.95)];
+  const trailColors = [new THREE.Color(0.6, 0.95, 1.0), new THREE.Color(0.95, 0.8, 1.0), new THREE.Color(1.0, 0.88, 0.6)];
+  function worldFromLocal(x, y, z) { return spirit.localToWorld(tmpV.set(x, y, z)).clone(); }
+  function burst(n = 34) {
+    const c = spirit.position, s0 = spirit.scale.x;
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, e = (Math.random() - 0.5) * 1.2, s = (1.4 + Math.random() * 1.6) * s0;
+      const dir = new THREE.Vector3(Math.cos(a) * Math.cos(e), Math.sin(e) * 0.8 + Math.sin(a) * 0.6, Math.sin(a) * Math.cos(e) * 0.5).normalize();
+      emit(c.clone().addScaledVector(dir, 0.9 * s0), dir.multiplyScalar(s), { life: 1.6 + Math.random(), size: (0.8 + Math.random() * 0.7) * s0, shape: 2, color: starColors[i % 3], drag: 2.2, grav: -0.15 });
+    }
+  }
+  function sparkle(n) {
+    const c = spirit.position, s0 = spirit.scale.x;
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2;
+      emit(c.clone().add(tmpV.set(Math.cos(a), Math.sin(a), 0.2).multiplyScalar(1.1 * s0)), new THREE.Vector3(Math.cos(a) * 0.6, Math.sin(a) * 0.6 + 0.4, 0).multiplyScalar(s0),
+        { life: 1.2 + Math.random() * 0.6, size: (0.4 + Math.random() * 0.4) * s0, shape: 2, color: starColors[1], drag: 1.5, grav: 0.1 });
+    }
+  }
+  lumiApi = { play, burst: () => burst(26), sparkle, busy: () => !!active };
+
+  /* ---- pointer ---- */
+  const pointer = new THREE.Vector2(0, 0), pointerS = new THREE.Vector2(0, 0); let hasPointer = false;
+  addEventListener('pointermove', e => { pointer.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight * 2 - 1)); hasPointer = true; }, { passive: true });
+  const lumiNDC = new THREE.Vector3(); let lumiPxR = 60;
+  function overLumi(x, y) { const sx = (lumiNDC.x * 0.5 + 0.5) * innerWidth, sy = (-lumiNDC.y * 0.5 + 0.5) * innerHeight; return Math.hypot(x - sx, y - sy) < lumiPxR; }
+  addEventListener('pointerdown', e => {
+    if (e.target.closest('a, button, summary, input, .glass')) return;
+    if (overLumi(e.clientX, e.clientY)) { const list = ['laugh', 'excite', 'laugh', 'cry']; emote(list[(Math.random() * list.length) | 0]); sparkle(8); }
+  });
+  let hoverCheck = 0;
+  addEventListener('pointermove', e => {
+    if (++hoverCheck % 3) return;
+    const ok = !e.target.closest('a, button, summary, input, .glass') && overLumi(e.clientX, e.clientY);
+    document.body.classList.toggle('over-lumi', ok);
+  }, { passive: true });
+
+  /* ---- sizing ---- */
+  function resize() {
+    const w = innerWidth, h = innerHeight;
+    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
+    bgU.uAspect.value = camera.aspect; nebU.uAspect.value = camera.aspect;
+    nebRT.setSize(Math.max(4, Math.round(w * renderer.getPixelRatio() * 0.5)), Math.max(4, Math.round(h * renderer.getPixelRatio() * 0.5)));
+    const p = renderer.getPixelRatio();
+    sparkUniforms.uPix.value = p; fxMat.uniforms.uPix.value = p; starMat.uniforms.uPix.value = p; goldU.uPix.value = p; dustU.uPix.value = p;
+    goldU.uScale.value = h * p / (2 * tanHalf);
+    measure();
+  }
+  addEventListener('resize', resize); resize();
+
+  /* ---- motion state ---- */
+  let clock = 0, flow = 0, orbit = 0, swirl = 0;
+  let nextBlink = 2.5, blinkT = -1;
+  const look = new THREE.Vector2();
+  const emitAcc = { tear: 0, giggle: 0, spark: 0, trail: 0 }; let tearSide = 1;
+  const cur = { x: 0, y: 0.36, z: 0, s: 1 }, vel = { x: 0, y: 0 };
+  let prevSwirl = 0, camZ = 0, scrollS = scrollY, scrollV = 0, lean = 0, squash = 0;
+  const lumiWorldPrev = new THREE.Vector3(); let firstFrame = true;
+
+  function target(y) {
+    const L = locate(y); const A = marks[L.i0], B = marks[L.i1];
+    const pa = isMobile ? A.m : A.d, pb = isMobile ? B.m : B.d;
+    const t = L.t, e = ease(t);
+    let x = lerp(pa[0], pb[0], e), yy = lerp(pa[1], pb[1], e), s = lerp(pa[2], pb[2], e), z = 0;
+    if (L.i0 !== L.i1 && !reduceMotion) {
+      // a looping swirl between anchors: out into the sky and back around
+      const dir = (pb[0] - pa[0]) >= 0 ? 1 : -1;
+      const ang = e * Math.PI * 2, r = Math.sin(Math.PI * t) * (isMobile ? 0.22 : 0.3);
+      x += Math.sin(ang) * r * dir * 0.9; yy += (1 - Math.cos(ang)) * r * 0.55 - Math.sin(Math.PI * t) * 0.1;
+      z = -Math.sin(Math.PI * t) * 5.5;
+    }
+    return { x, y: yy, z, s, skyA: A.sky, skyB: B.sky, t: e, swirlAmt: L.i0 !== L.i1 ? Math.sin(Math.PI * t) : 0 };
+  }
+
+  /* ---- adaptive resolution ---- */
+  let perfAcc = 0, perfN = 0;
+  function adapt(dt) {
+    perfAcc += dt; perfN++;
+    if (perfAcc > 2) {
+      const avg = perfAcc / perfN; perfAcc = 0; perfN = 0;
+      let nd = dpr;
+      if (avg > 1 / 40 && dpr > 0.75) nd = Math.max(0.75, dpr - 0.25);
+      else if (avg < 1 / 58 && dpr < DPR_MAX) nd = Math.min(DPR_MAX, dpr + 0.25);
+      if (nd !== dpr) { dpr = nd; renderer.setPixelRatio(dpr); resize(); }
+    }
+  }
+
+  let last = performance.now(), running = true;
+  document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) { last = performance.now(); requestAnimationFrame(frame); } });
+  function frame(now) {
+    if (!running) return;
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    step(dt);
+    renderer.setRenderTarget(nebRT); renderer.render(nebScene, nebCam); renderer.setRenderTarget(null);
+    renderer.render(scene, camera); adapt(dt);
+    requestAnimationFrame(frame);
+  }
+
+  const lumiV = new THREE.Vector3();
+  function step(dt) {
+    clock += dt;
+    // smoothed scroll keeps the 3D motion fluid even with notchy mouse wheels
+    const prevS = scrollS; scrollS += (scrollY - scrollS) * (1 - Math.exp(-dt * 7));
+    const sv = (scrollS - prevS) / Math.max(dt, 1e-3) / vh; scrollV += (sv - scrollV) * (1 - Math.exp(-dt * 6));
+    const T = target(scrollS + 1);
+    // a happy squeal as Lumi takes off between stops
+    if (T.swirlAmt > 0.12 && prevSwirl <= 0.12 && !active) emote('laugh', 2.4);
+    prevSwirl = T.swirlAmt;
+    const k = 1 - Math.exp(-dt * (reduceMotion ? 10 : 4.2));
+    const px = cur.x, py = cur.y;
+    cur.x += (T.x - cur.x) * k; cur.y += (T.y - cur.y) * k; cur.z += (T.z - cur.z) * k; cur.s += (T.s - cur.s) * k;
+    vel.x = (cur.x - px) / Math.max(dt, 1e-3); vel.y = (cur.y - py) / Math.max(dt, 1e-3);
+    mixSky(T.skyA, T.skyB, T.t);
+
+    // camera glides forward through the clouds with the page
+    const prog = scrollS / maxScroll;
+    camZ += (-prog * TRAVEL - camZ) * (1 - Math.exp(-dt * 5));
+    pointerS.lerp(hasPointer ? pointer : pointerS.set(0, 0), 1 - Math.exp(-dt * 2.5));
+    camera.position.set(pointerS.x * 0.5 + Math.sin(prog * Math.PI * 3) * 1.2, pointerS.y * 0.3 + Math.sin(prog * Math.PI * 4 + 1) * 0.9, camZ);
+    camera.updateMatrixWorld();
+
+    // emotion envelopes
+    if (active) { activeT += dt; if (activeT > activeDur) active = null; }
+    for (const e in weight) { const tg = e === active ? envelope(activeT, activeDur) : 0; weight[e] += (tg - weight[e]) * (1 - Math.exp(-dt * 7)); }
+    const L = weight.laugh, Cr = weight.cry, E = weight.excite;
+    const lt = active ? activeT : clock;
+    const spd = Math.min(1.5, Math.hypot(vel.x, vel.y)) + Math.min(1, Math.abs(scrollV) * 0.6);
+    const sw = Math.max(T.swirlAmt * 0.8, Math.min(1, spd * 0.7));
+
+    flow += dt * (1 + L * 0.8 + E * 2.0 - Cr * 0.45 + sw * 2.2) * MOTION;
+    swirl += dt * (0.05 + E * 0.25 + sw * 0.3) * MOTION;
+    orbit += dt * (1 + E * 3.2 + L * 0.8 - Cr * 0.5 + sw * 3.0) * MOTION;
+
+    // idle bob plus emotion body language (from the original scene)
+    const t = clock;
+    let bx = (Math.sin(t * 0.17) * 0.08 + Math.sin(t * 0.37 + 2.0) * 0.03) * MOTION;
+    let by = (Math.sin(t * 0.55) * 0.13 + Math.sin(t * 0.21 + 1.3) * 0.05) * MOTION;
+    let rotZ = Math.sin(t * 0.29) * 0.035 * MOTION;
+    let sx = 1 + Math.sin(t * 0.9) * 0.012, sy = sx;
+    const giggle = Math.sin(lt * 15.0);
+    by += L * (giggle * 0.045 + 0.06) * MOTION; rotZ += L * Math.sin(lt * 3.6) * 0.09 * MOTION; sy += L * giggle * 0.03 * MOTION; sx -= L * giggle * 0.02 * MOTION;
+    const sob = Math.pow(Math.max(0, Math.sin(lt * 4.2)), 6);
+    by += Cr * (-0.18 - sob * 0.04) * MOTION; sy += Cr * (-0.03 + sob * 0.035) * MOTION; sx += Cr * (0.02 - sob * 0.015) * MOTION; rotZ += Cr * Math.sin(lt * 1.1) * 0.03 * MOTION;
+    const hop = Math.sin(lt * 10.5);
+    by += E * (0.16 + hop * 0.06) * MOTION; rotZ += E * Math.sin(lt * 6.0) * 0.1 * MOTION; sx += E * (0.07 - hop * 0.02); sy += E * (0.07 + hop * 0.03);
+
+    // lean into the direction of travel, stretch a little with speed
+    lean += (clamp(-vel.x * 0.35, -0.45, 0.45) - lean) * (1 - Math.exp(-dt * 5));
+    squash += (clamp(Math.hypot(vel.x, vel.y) * 0.08, 0, 0.12) - squash) * (1 - Math.exp(-dt * 5));
+
+    // place Lumi in front of the camera at the normalised screen anchor
+    const dist = D - cur.z;
+    const halfH = dist * tanHalf, halfW = halfH * camera.aspect;
+    const aspectFit = clamp(camera.aspect / 1.25, 0.55, 1);
+    const S = cur.s * aspectFit;
+    spirit.position.set(camera.position.x * 0.0 + cur.x * halfW + bx * S, cur.y * halfH + by * S, camZ - dist);
+    spirit.position.x += camera.position.x; spirit.position.y += camera.position.y;
+    spirit.rotation.z = rotZ + lean;
+    spirit.scale.set(sx * S * (1 + squash), sy * S * (1 - squash * 0.6), sx * S);
+    spirit.updateMatrixWorld();
+
+    // screen-space info for the sky glow, clicks and cloud layering
+    lumiNDC.copy(spirit.position).project(camera);
+    const edge = tmpV.copy(spirit.position).add(new THREE.Vector3(S * 1.05, 0, 0)).project(camera);
+    lumiPxR = Math.abs(edge.x - lumiNDC.x) * 0.5 * innerWidth;
+    bgU.uLumi.value.set(lumiNDC.x * 0.5 + 0.5, lumiNDC.y * 0.5 + 0.5);
+    bgU.uLumiR.value = 0.12 + 0.2 * S;
+    lumiV.copy(spirit.position).applyMatrix4(camera.matrixWorldInverse);
+    const pr = renderer.getPixelRatio();
+    cloudMats.forEach(m => { m.uniforms.uLumiPx.value.set((lumiNDC.x * 0.5 + 0.5) * innerWidth * pr, (lumiNDC.y * 0.5 + 0.5) * innerHeight * pr, Math.max(20, lumiPxR * pr)); m.uniforms.uSplit.value = spirit.position.z; m.uniforms.uLumiV.value.copy(lumiV); m.uniforms.uTime.value = clock; });
+
+    // colour and light
+    tint.copy(cIdle).lerp(cLaugh, L).lerp(cCry, Cr).lerp(cExcite, E);
+    const breathe = 1 + Math.sin(t * 0.9) * 0.05;
+    const bright = breathe * (1 + L * 0.14 + E * 0.24 - Cr * 0.22 + sw * 0.08) + E * Math.max(0, hop) * 0.06;
+    orbUniforms.uColor.value.copy(tint); orbUniforms.uBright.value = bright; orbUniforms.uTime.value = clock; orbUniforms.uFlow.value = flow; orbUniforms.uSwirl.value = swirl;
+    nebU.uTime.value = clock; nebU.uScroll.value = prog; nebU.uNeb.value = 0.75 + sky.neb * 0.35; nebU.uDrift.value.set(pointerS.x * 0.04, pointerS.y * 0.03);
+    bgU.uTime.value = clock; bgU.uMoon.value = sky.moon; bgU.uRibbon.value = sky.ribbon; bgU.uNeb.value = sky.neb; bgU.uScroll.value = prog;
+    bgU.uLumiCol.value.copy(tint);
+    cloudU.uLumiCol.value.copy(tint);
+    starMat.uniforms.uTime.value = clock; starMat.uniforms.uAmt.value = sky.stars;
+    goldU.uTime.value = clock; dustU.uTime.value = clock; dustU.uCam.value.copy(camera.position);
+
+    sparkUniforms.uOrbit.value = orbit; sparkUniforms.uClock.value = clock;
+    sparkUniforms.uSpread.value = 1 + E * 0.3 + L * 0.05 + sw * 0.35; sparkUniforms.uFall.value = Cr * 0.9; sparkUniforms.uJitter.value = L * 0.7 * MOTION;
+    sparkUniforms.uBright.value = 0.9 + E * 0.6 + L * 0.25 - Cr * 0.25 + sw * 0.3;
+    sparkUniforms.uColor.value.copy(tint).lerp(white, 0.25);
+    updateTendrils(clock, flow, 0.95 + E * 0.4 + L * 0.2 - Cr * 0.3 + sw * 0.3, Cr, tmpC.copy(tint).lerp(white, 0.3), sw);
+
+    // face: blink, look toward the pointer
+    if (blinkT < 0 && clock > nextBlink && L < 0.5) blinkT = 0;
+    let blink = 0;
+    if (blinkT >= 0) { blinkT += dt; const b = blinkT / 0.2; blink = b < 0.5 ? smooth(0, 0.5, b) : 1 - smooth(0.5, 1, b); if (b >= 1) { blinkT = -1; nextBlink = clock + 2.2 + Math.random() * 3.6; } }
+    const lx = hasPointer ? clamp((pointerS.x - lumiNDC.x) * 0.06, -0.07, 0.07) : Math.sin(t * 0.33) * 0.025;
+    const ly = hasPointer ? clamp((pointerS.y - lumiNDC.y) * 0.05, -0.05, 0.05) : Math.sin(t * 0.27 + 1.0) * 0.015;
+    look.lerp(tmpV.set(lx + vel.x * 0.03, ly - Cr * 0.035 + E * 0.015 + vel.y * 0.03, 0), 1 - Math.exp(-dt * 4));
+    faceUniforms.uLaugh.value = L; faceUniforms.uCry.value = Cr; faceUniforms.uExcite.value = E;
+    faceUniforms.uBlink.value = blink; faceUniforms.uMouth.value = 0.5 + 0.5 * Math.sin(lt * 15.0); faceUniforms.uTime.value = clock;
+    faceUniforms.uBlush.value = Math.max(L, E * 0.8, 0.18);
+    faceUniforms.uLook.value.copy(look);
+
+    // particles
+    if (Cr > 0.4) {
+      emitAcc.tear += dt * 3.2 * Cr;
+      while (emitAcc.tear > 1) { emitAcc.tear -= 1; tearSide *= -1;
+        const p = worldFromLocal(0.205 * tearSide + look.x, -0.06 + look.y, 1.02);
+        emit(p, new THREE.Vector3(0.12 * tearSide + (Math.random() - 0.5) * 0.06, -0.05, 0.15).multiplyScalar(S), { life: 2.0, size: (0.8 + Math.random() * 0.25) * S, shape: 1, color: new THREE.Color(0.6, 0.85, 1.0), drag: 0.7, grav: -0.8 * S }); }
+    }
+    if (L > 0.4) {
+      emitAcc.giggle += dt * 7 * L;
+      while (emitAcc.giggle > 1) { emitAcc.giggle -= 1; const a = Math.random() * Math.PI * 2;
+        emit(worldFromLocal(Math.cos(a) * 1.05, Math.sin(a) * 1.05, 0.2), new THREE.Vector3(Math.cos(a) * 0.25, 0.45 + Math.random() * 0.3, 0).multiplyScalar(S),
+          { life: 1.8, size: (0.3 + Math.random() * 0.3) * S, shape: Math.random() < 0.3 ? 2 : 0, color: new THREE.Color(0.75, 0.96, 1.0), drag: 0.8, grav: 0.1 }); }
+    }
+    if (E > 0.4) {
+      emitAcc.spark += dt * 10 * E;
+      while (emitAcc.spark > 1) { emitAcc.spark -= 1; const a = Math.random() * Math.PI * 2;
+        emit(worldFromLocal(Math.cos(a) * 1.1, Math.sin(a) * 1.1, 0.3), new THREE.Vector3(Math.cos(a) * 0.9, Math.sin(a) * 0.9 + 0.2, 0).multiplyScalar(S),
+          { life: 1.3, size: (0.55 + Math.random() * 0.45) * S, shape: 2, color: starColors[(Math.random() * 3) | 0], drag: 1.6, grav: 0 }); }
+    }
+    // stardust trail while Lumi swirls between sections
+    if (!firstFrame && !reduceMotion) {
+      const moved = lumiWorldPrev.distanceTo(spirit.position) - Math.abs(camZ - (lumiWorldPrev.z + dist)) * 0;
+      const rate = clamp(Math.hypot(vel.x, vel.y) * 60 + sw * 30, 0, 90);
+      emitAcc.trail += dt * rate;
+      while (emitAcc.trail > 1) { emitAcc.trail -= 1;
+        const a = Math.random() * Math.PI * 2, rr = Math.random() * 0.8 * S;
+        const p = spirit.position.clone().add(tmpV.set(Math.cos(a) * rr, Math.sin(a) * rr, -0.3));
+        emit(p, new THREE.Vector3((Math.random() - 0.5) * 0.3, (Math.random() - 0.5) * 0.3 + 0.1, 0),
+          { life: 1.0 + Math.random() * 1.2, size: (0.25 + Math.random() * 0.4) * S, shape: Math.random() < 0.35 ? 2 : 0, color: trailColors[(Math.random() * 3) | 0], drag: 1.2, grav: 0.05 });
+      }
+      void moved;
+    }
+    lumiWorldPrev.copy(spirit.position); firstFrame = false;
+    updateFx(dt);
+  }
+
+  window.__lumi = { play, step: (s, n) => { for (let i = 0; i < n; i++) step(s); renderer.setRenderTarget(nebRT); renderer.render(nebScene, nebCam); renderer.setRenderTarget(null); renderer.render(scene, camera); }, info: () => ({ dpr, x: cur.x, y: cur.y, calls: renderer.info.render.calls, tris: renderer.info.render.triangles }), bench: n => { const t0 = performance.now(); for (let i = 0; i < n; i++) step(1 / 60); return (performance.now() - t0) / n; } };
+  requestAnimationFrame(frame);
+  // greet on arrival
+  setTimeout(() => emote('excite', 3.2), 900);
+  }
+})();
+</script>
+
+</body>
+</html>
