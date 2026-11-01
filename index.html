@@ -423,8 +423,13 @@ body.over-lumi { cursor: pointer; }
 .made-for { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; color: var(--ink-faint); margin: 0; }
 
 @media (max-width: 880px) {
-  .tour-grid { grid-template-columns: 1fr; }
-  .phone-col { grid-row: 1; grid-column: 1; top: calc(env(safe-area-inset-top, 0px) + 76px); z-index: 1; }
+  .tour-grid { grid-template-columns: 1fr; position: relative; }
+  /* Phones: not position: sticky. iOS Safari jitters sticky layers by a pixel or two while
+     momentum scrolling, so the phone is pinned with position: fixed (like the nav, which is
+     rock steady) and handed back to the page at both ends of the tour. */
+  .phone-col { --pin-top: calc(env(safe-area-inset-top, 0px) + 100px); grid-row: 1; grid-column: 1; position: absolute; left: 0; right: 0; top: 0; z-index: 1; }
+  .phone-col.pin { position: fixed; top: var(--pin-top); }
+  .phone-col.end { top: auto; bottom: 0; }
   .steps { grid-row: 1; grid-column: 1; }
   .step { min-height: 75vh; opacity: 0; pointer-events: none; }
   .step.on { opacity: 0; }
@@ -996,7 +1001,7 @@ document.documentElement.classList.add('js');
   function sizePhone() {
     const narrow = innerWidth <= 880;
     if (innerWidth !== phoneVW || !narrow || Math.abs(innerHeight - phoneVH) > 160) { phoneVW = innerWidth; phoneVH = innerHeight; }
-    const byH = narrow ? (phoneVH - 76 - 150) / 628 : (phoneVH - 70) / 628;
+    const byH = narrow ? (phoneVH - 100 - 150) / 628 : (phoneVH - 70) / 628;
     const byW = narrow ? (innerWidth * 0.6) / 300 : 1;
     phoneScale = Math.round(clamp(Math.min(byH, byW, 1), 0.5, 1) * 100) / 100;
     phoneBox.style.width = 300 * phoneScale + 'px'; phoneBox.style.height = 628 * phoneScale + 'px';
@@ -1016,8 +1021,29 @@ document.documentElement.classList.add('js');
   // On phones the mockup is position: sticky. iOS Safari moves sticky layers on the compositor
   // while scrolling, so rewriting the transform from JS every frame made the phone jitter by a few
   // pixels against the scroll. There, it gets one fixed 3D pose and is never touched while scrolling.
-  let phoneStatic = '';
+  let phoneStatic = '', pinState = '';
+  const phoneCol = $('.phone-col'), tourGrid = $('.tour-grid');
+  function pinPhone() {
+    if (innerWidth > 880) { if (pinState) { phoneCol.classList.remove('pin', 'end'); phoneCol.style.left = phoneCol.style.width = ''; pinState = ''; } return; }
+    const g = tourGrid.getBoundingClientRect();
+    const T = pinTopPx(), H = phoneCol.offsetHeight;
+    const next = g.top > T ? 'top' : (g.bottom - H <= T ? 'end' : 'pin');
+    if (next !== pinState) {
+      pinState = next;
+      phoneCol.classList.toggle('pin', next === 'pin'); phoneCol.classList.toggle('end', next === 'end');
+    }
+    if (next === 'pin') { const l = Math.round(g.left) + 'px', w = Math.round(g.width) + 'px'; if (phoneCol.style.left !== l) phoneCol.style.left = l; if (phoneCol.style.width !== w) phoneCol.style.width = w; }
+    else if (phoneCol.style.left) { phoneCol.style.left = phoneCol.style.width = ''; }
+  }
+  let pinTopCache = 0;
+  function pinTopPx() {
+    if (!pinTopCache) { const d = document.createElement('div'); d.style.cssText = 'position:fixed;visibility:hidden;height:var(--pin-top)'; phoneCol.appendChild(d); pinTopCache = d.offsetHeight || 100; d.remove(); }
+    return pinTopCache;
+  }
+  addEventListener('scroll', pinPhone, { passive: true });
+  addEventListener('resize', () => { pinTopCache = 0; pinPhone(); });
   function phoneFrame() {
+    pinPhone();
     const r = tour.getBoundingClientRect();
     if (innerWidth <= 880) {
       const k = 1 - phoneScale;
