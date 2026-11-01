@@ -72,13 +72,13 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .nav-links { display: flex; gap: 4px; margin-left: auto; list-style: none; padding: 0; margin-block: 0; }
 .nav-links a { color: var(--ink-soft); text-decoration: none; font-size: 15px; font-weight: 600; padding: 8px 12px; border-radius: 999px; transition: color .3s, background .3s; }
 .nav-links a:hover { color: var(--ink); background: rgba(255,255,255,.07); }
-.nav .btn { padding: 10px 18px; font-size: 15px; }
+.nav .btn { padding: 10px 18px; font-size: 15px; min-height: 0; }
 @media (max-width: 880px) { .nav-links { display: none; } .nav .btn { margin-left: auto; } }
 
 /* ---------- buttons ---------- */
 .btn {
   display: inline-flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer;
-  font: inherit; font-weight: 700; font-size: 17px; border-radius: 999px; padding: 16px 28px; border: 0;
+  font: inherit; font-weight: 700; font-size: 17px; line-height: 1.2; border-radius: 999px; padding: 0 28px; min-height: 58px; box-sizing: border-box; justify-content: center; border: 0;
   transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, background .35s ease;
 }
 .btn-glow { color: var(--btn-ink); background: linear-gradient(180deg, #ffffff, #e6dcff); box-shadow: 0 0 0 1px rgba(255,255,255,.6) inset, 0 10px 40px -8px rgba(190, 160, 255, .75), 0 0 60px -10px rgba(166, 241, 255, .6); }
@@ -276,7 +276,7 @@ body.over-lumi { cursor: pointer; }
 .center .col::before { inset: -8% -10%; }
 
 /* app download button */
-.btn-app { color: #fff; background: #0e0a24; box-shadow: 0 0 0 1px rgba(255,255,255,.28) inset, 0 12px 40px -10px rgba(10,4,40,.8); padding: 11px 24px 11px 18px; }
+.btn-app { color: #fff; background: #0e0a24; box-shadow: 0 0 0 1px rgba(255,255,255,.28) inset, 0 12px 40px -10px rgba(10,4,40,.8); padding: 0 24px 0 18px; }
 .btn-app:hover { transform: translateY(-2px); background: #1a1340; }
 .btn-app svg { width: 24px; height: 24px; flex: none; }
 .btn-app .two-line { display: grid; line-height: 1.12; text-align: left; }
@@ -428,7 +428,7 @@ body.over-lumi { cursor: pointer; }
   .steps { grid-row: 1; grid-column: 1; }
   .step { min-height: 75vh; opacity: 0; pointer-events: none; }
   .step.on { opacity: 0; }
-  .phone-caption { display: grid; gap: 6px; text-align: center; max-width: 380px; min-height: 118px; align-content: start; }
+  .phone-caption { display: grid; gap: 6px; text-align: center; max-width: 380px; height: 150px; overflow: hidden; align-content: start; contain: layout paint; }
   .phone-caption h3 { font-size: 21px; line-height: 1.2; }
   .phone-caption p { margin: 0; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
   .phone-caption .step-k { font-size: 12px; }
@@ -439,9 +439,9 @@ body.over-lumi { cursor: pointer; }
 @media (max-width: 720px) {
   body { font-size: 16px; }
   .wrap { padding-block: 12vh; }
-  #home .wrap { padding-top: 46vh; }
+  #home .wrap { padding-top: 56vh; }
   #begin .wrap { padding-top: 44vh; }
-  .sec:not(#home):not(#begin) .wrap { padding-top: 22vh; }
+  .sec:not(#home):not(#begin) .wrap { padding-top: 30vh; }
   .card, .reading, .plan { padding: 22px; }
   .glass { -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
   .price b { font-size: 48px; }
@@ -473,7 +473,7 @@ body.over-lumi { cursor: pointer; }
 
 <main>
   <!-- 1. hero -->
-  <section class="sec center" id="home" data-label="Home" data-sky="dusk" data-lumi="0,0.36,1.05" data-lumi-m="0,0.46,0.8" data-emote="excite">
+  <section class="sec center" id="home" data-label="Home" data-sky="dusk" data-lumi="0,0.36,1.05" data-lumi-m="0,0.3,1.35" data-emote="excite">
     <div class="wrap">
       <div class="col">
         <p class="eyebrow rv in">The spiritual wellness app for iPhone</p>
@@ -504,7 +504,7 @@ body.over-lumi { cursor: pointer; }
             <h3>Start every day knowing what it holds.</h3>
             <p>Your daily forecast, your energy and a gentle nudge from Lumi, waiting the moment you open the app.</p>
           </div>
-          <div class="step" data-lumi-ph="-1,-0.32,0.5" data-step="1" data-sky="dusk2" data-lumi="0.86,-0.3,0.5" data-lumi-m="0.84,0.15,0.36" data-emote="cry">
+          <div class="step" data-lumi-ph="-1,-0.32,0.5" data-step="1" data-sky="dusk2" data-lumi="0.86,-0.3,0.5" data-lumi-m="0.84,0.1,0.36" data-emote="cry">
             <p class="step-k">Talk</p>
             <h3>Talk it out, any time.</h3>
             <p>Type what's on your mind and watch the heavy stuff turn into something you can work with, then into a step on your list.</p>
@@ -599,7 +599,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 2. manifestation -->
-  <section class="sec right" id="manifest" data-label="Manifest" data-sky="dusk" data-lumi="-0.52,0.04,0.95" data-lumi-m="0.52,0.7,0.46" data-emote="laugh">
+  <section class="sec right" id="manifest" data-label="Manifest" data-sky="dusk" data-lumi="-0.52,0.04,0.95" data-lumi-m="0.52,0.6,0.46" data-emote="laugh">
     <div class="wrap">
       <div class="col">
         <p class="eyebrow rv">Manifestation</p>
@@ -617,7 +617,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 3. vent -->
-  <section class="sec" id="vent" data-label="Talk it out" data-sky="dusk2" data-lumi="0.52,0.06,0.95" data-lumi-m="-0.52,0.7,0.46" data-emote="">
+  <section class="sec" id="vent" data-label="Talk it out" data-sky="dusk2" data-lumi="0.52,0.06,0.95" data-lumi-m="-0.52,0.6,0.46" data-emote="">
     <div class="wrap">
       <div class="col">
         <p class="eyebrow rv">Vent about your day</p>
@@ -637,7 +637,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 4. what's included -->
-  <section class="sec" id="caps" data-label="What's inside" data-sky="dusk" data-lumi="-0.86,0.3,0.55" data-lumi-m="0.6,0.78,0.36" data-emote="laugh">
+  <section class="sec" id="caps" data-label="What's inside" data-sky="dusk" data-lumi="-0.86,0.3,0.55" data-lumi-m="0.62,0.6,0.38" data-emote="laugh">
     <div class="wrap">
       <div class="head">
         <p class="eyebrow rv">What's included</p>
@@ -679,7 +679,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 5. readings -->
-  <section class="sec" id="readings" data-label="Readings" data-sky="night" data-lumi="0.88,-0.5,0.55" data-lumi-m="-0.6,0.78,0.36" data-emote="excite">
+  <section class="sec" id="readings" data-label="Readings" data-sky="night" data-lumi="0.88,-0.5,0.55" data-lumi-m="-0.62,0.6,0.38" data-emote="excite">
     <div class="wrap">
       <div class="head">
         <p class="eyebrow rv">Readings</p>
@@ -720,7 +720,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 6. signs -->
-  <section class="sec right" id="signs" data-label="Signs" data-sky="aurora" data-lumi="-0.52,0.02,0.95" data-lumi-m="0.52,0.7,0.46" data-emote="laugh">
+  <section class="sec right" id="signs" data-label="Signs" data-sky="aurora" data-lumi="-0.52,0.02,0.95" data-lumi-m="0.52,0.6,0.46" data-emote="laugh">
     <div class="wrap">
       <div class="col">
         <p class="eyebrow rv">Magical moments, synchronicities, signs</p>
@@ -740,7 +740,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 7. trust -->
-  <section class="sec" id="why" data-label="Why Lunaz" data-sky="aurora" data-lumi="0.52,0.1,0.9" data-lumi-m="-0.52,0.72,0.44" data-emote="laugh">
+  <section class="sec" id="why" data-label="Why Lunaz" data-sky="aurora" data-lumi="0.52,0.1,0.9" data-lumi-m="-0.52,0.6,0.44" data-emote="laugh">
     <div class="wrap">
       <div class="col">
         <p class="eyebrow rv">Spiritual, and actually solid</p>
@@ -756,7 +756,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 8. pricing -->
-  <section class="sec" id="pricing" data-label="Pricing" data-sky="dusk" data-lumi="-0.86,0.28,0.55" data-lumi-m="0.6,0.78,0.36" data-emote="excite">
+  <section class="sec" id="pricing" data-label="Pricing" data-sky="dusk" data-lumi="-0.86,0.28,0.55" data-lumi-m="0.62,0.6,0.38" data-emote="excite">
     <div class="wrap">
       <div class="head">
         <p class="eyebrow rv">Pricing</p>
@@ -801,7 +801,7 @@ body.over-lumi { cursor: pointer; }
   </section>
 
   <!-- 9. faq -->
-  <section class="sec" id="faq" data-label="FAQ" data-sky="dusk2" data-lumi="0.55,0.1,0.85" data-lumi-m="-0.6,0.78,0.36" data-emote="laugh">
+  <section class="sec" id="faq" data-label="FAQ" data-sky="dusk2" data-lumi="0.55,0.1,0.85" data-lumi-m="-0.62,0.6,0.38" data-emote="laugh">
     <div class="wrap">
       <div class="col" style="max-width:600px">
         <p class="eyebrow rv">Questions, answered</p>
@@ -990,11 +990,15 @@ document.documentElement.classList.add('js');
   const steps = $$('.step'), screens = $$('#phone .screen'), tabs = $$('#pTabs span');
   const phoneBox = $('#phoneBox'), phoneTilt = $('#phoneTilt'), phoneCap = $('#phoneCap'), tour = $('#app');
   let phoneStep = -1, phoneScale = 1;
+  // size from a stable viewport height: mobile URL bars resize innerHeight while scrolling,
+  // which used to rescale the sticky phone by a pixel and make it jitter
+  let phoneVW = 0, phoneVH = 0;
   function sizePhone() {
     const narrow = innerWidth <= 880;
-    const byH = narrow ? (innerHeight - 76 - 150) / 628 : (innerHeight - 70) / 628;
+    if (innerWidth !== phoneVW || !narrow || Math.abs(innerHeight - phoneVH) > 160) { phoneVW = innerWidth; phoneVH = innerHeight; }
+    const byH = narrow ? (phoneVH - 76 - 170) / 628 : (phoneVH - 70) / 628;
     const byW = narrow ? (innerWidth * 0.6) / 300 : 1;
-    phoneScale = clamp(Math.min(byH, byW, 1), 0.5, 1);
+    phoneScale = Math.round(clamp(Math.min(byH, byW, 1), 0.5, 1) * 100) / 100;
     phoneBox.style.width = 300 * phoneScale + 'px'; phoneBox.style.height = 628 * phoneScale + 'px';
     $('.phone-col').style.top = narrow ? '' : `calc(50vh - ${314 * phoneScale}px)`;
   }
@@ -1016,7 +1020,7 @@ document.documentElement.classList.add('js');
       tilt.ty = lerp(-16, 12, p) + (reduceMotion ? 0 : tilt.px * 8);
       tilt.tx = 6 - (reduceMotion ? 0 : tilt.py * 5) + Math.sin(p * Math.PI * 4) * 2;
       tilt.x += (tilt.tx - tilt.x) * 0.08; tilt.y += (tilt.ty - tilt.y) * 0.08;
-      const bob = reduceMotion ? 0 : Math.sin(performance.now() / 900) * 4;
+      const bob = (reduceMotion || innerWidth <= 880) ? 0 : Math.sin(performance.now() / 900) * 4;
       const k = 1 - phoneScale;
       phoneTilt.style.transform = `translate(${(-150 * k).toFixed(1)}px, ${(-314 * k + bob).toFixed(1)}px) rotateX(${tilt.x.toFixed(2)}deg) rotateY(${tilt.y.toFixed(2)}deg) scale(${phoneScale})`;
     }
@@ -1167,10 +1171,18 @@ document.documentElement.classList.add('js');
         // crescent moon
         vec2 mc = vec2(0.5 + (uAspect > 1.0 ? 0.33 : 0.28) * uAspect, 0.86 - uScroll * 0.08);
         vec2 mp = vec2((uv.x - 0.5) * uAspect + 0.5, uv.y) - mc;
-        float mr = 0.032;
-        float d1 = length(mp) - mr, d2 = length(mp - vec2(0.014, 0.009)) - mr * 0.9;
-        float cres = smoothstep(0.002, -0.002, d1) * smoothstep(-0.002, 0.002, d2);
-        col += vec3(1.0, 0.95, 0.86) * cres * uMoon * 0.95 + vec3(0.75, 0.7, 1.0) * exp(-length(mp) * 16.0) * 0.18 * uMoon;
+        // moon phase follows the scroll: waxing crescent at the top, full mid-page, waning at the end
+        float mr = 0.034;
+        vec2 mn = mp / mr; float disc = smoothstep(1.0 + 0.06, 1.0 - 0.06, length(mn));
+        float th = mix(0.75, 6.2832 - 0.75, uScroll);
+        float kk = sqrt(max(0.0, 1.0 - mn.y * mn.y));
+        float edge = th < 3.14159 ? mn.x - kk * cos(th) : kk * cos(th - 3.14159) - mn.x;
+        float lit = smoothstep(-0.07, 0.07, edge);
+        float maria = 1.0 - 0.13 * smoothstep(0.34, 0.0, length(mn - vec2(-0.28, 0.22))) - 0.1 * smoothstep(0.3, 0.0, length(mn - vec2(0.22, -0.12))) - 0.08 * smoothstep(0.24, 0.0, length(mn - vec2(0.05, 0.5)));
+        float fullness = 0.5 - 0.5 * cos(th);
+        col = mix(col, col * 0.55 + vec3(0.11, 0.1, 0.2), disc * uMoon * 0.85);
+        col += vec3(1.0, 0.95, 0.86) * disc * lit * maria * uMoon * 0.95;
+        col += vec3(0.75, 0.7, 1.0) * exp(-length(mp) * 16.0) * (0.12 + 0.16 * fullness) * uMoon;
         // light ribbons
         if (uRibbon > 0.001) {
           for (int k = 0; k < 2; k++) {
@@ -1671,7 +1683,7 @@ document.documentElement.classList.add('js');
   function overLumi(x, y) { const sx = (lumiNDC.x * 0.5 + 0.5) * innerWidth, sy = (-lumiNDC.y * 0.5 + 0.5) * innerHeight; return Math.hypot(x - sx, y - sy) < lumiPxR; }
   addEventListener('pointerdown', e => {
     if (e.target.closest('a, button, summary, input, .glass')) return;
-    if (overLumi(e.clientX, e.clientY)) { const list = ['laugh', 'excite', 'laugh', 'cry']; emote(list[(Math.random() * list.length) | 0]); sparkle(8); }
+    if (overLumi(e.clientX, e.clientY)) { const list = ['laugh', 'excite', 'laugh']; emote(list[(Math.random() * list.length) | 0]); sparkle(8); }
   });
   let hoverCheck = 0;
   addEventListener('pointermove', e => {
