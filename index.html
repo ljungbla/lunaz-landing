@@ -428,7 +428,7 @@ body.over-lumi { cursor: pointer; }
   .steps { grid-row: 1; grid-column: 1; }
   .step { min-height: 75vh; opacity: 0; pointer-events: none; }
   .step.on { opacity: 0; }
-  .phone-caption { display: grid; gap: 6px; text-align: center; max-width: 380px; height: 150px; overflow: hidden; align-content: start; contain: layout paint; }
+  .phone-caption { display: grid; gap: 6px; text-align: center; max-width: 380px; height: 148px; overflow: hidden; align-content: start; contain: layout paint; }
   .phone-caption h3 { font-size: 21px; line-height: 1.2; }
   .phone-caption p { margin: 0; color: var(--ink-soft); font-size: 15px; line-height: 1.5; }
   .phone-caption .step-k { font-size: 12px; }
@@ -439,7 +439,7 @@ body.over-lumi { cursor: pointer; }
 @media (max-width: 720px) {
   body { font-size: 16px; }
   .wrap { padding-block: 12vh; }
-  #home .wrap { padding-top: 56vh; }
+  #home .wrap { padding-top: 45vh; }
   #begin .wrap { padding-top: 44vh; }
   .sec:not(#home):not(#begin) .wrap { padding-top: 30vh; }
   .card, .reading, .plan { padding: 22px; }
@@ -473,7 +473,7 @@ body.over-lumi { cursor: pointer; }
 
 <main>
   <!-- 1. hero -->
-  <section class="sec center" id="home" data-label="Home" data-sky="dusk" data-lumi="0,0.36,1.05" data-lumi-m="0,0.3,1.35" data-emote="excite">
+  <section class="sec center" id="home" data-label="Home" data-sky="dusk" data-lumi="0,0.36,1.05" data-lumi-m="0,0.4,1.35" data-emote="excite">
     <div class="wrap">
       <div class="col">
         <p class="eyebrow rv in">The spiritual wellness app for iPhone</p>
@@ -996,7 +996,7 @@ document.documentElement.classList.add('js');
   function sizePhone() {
     const narrow = innerWidth <= 880;
     if (innerWidth !== phoneVW || !narrow || Math.abs(innerHeight - phoneVH) > 160) { phoneVW = innerWidth; phoneVH = innerHeight; }
-    const byH = narrow ? (phoneVH - 76 - 170) / 628 : (phoneVH - 70) / 628;
+    const byH = narrow ? (phoneVH - 76 - 150) / 628 : (phoneVH - 70) / 628;
     const byW = narrow ? (innerWidth * 0.6) / 300 : 1;
     phoneScale = Math.round(clamp(Math.min(byH, byW, 1), 0.5, 1) * 100) / 100;
     phoneBox.style.width = 300 * phoneScale + 'px'; phoneBox.style.height = 628 * phoneScale + 'px';
@@ -1013,14 +1013,23 @@ document.documentElement.classList.add('js');
   }
   const tilt = { x: 0, y: 0, tx: 0, ty: 0, px: 0, py: 0 };
   addEventListener('pointermove', e => { tilt.px = e.clientX / innerWidth * 2 - 1; tilt.py = e.clientY / innerHeight * 2 - 1; }, { passive: true });
+  // On phones the mockup is position: sticky. iOS Safari moves sticky layers on the compositor
+  // while scrolling, so rewriting the transform from JS every frame made the phone jitter by a few
+  // pixels against the scroll. There, it gets one fixed 3D pose and is never touched while scrolling.
+  let phoneStatic = '';
   function phoneFrame() {
     const r = tour.getBoundingClientRect();
-    if (r.bottom > -50 && r.top < innerHeight + 50) {
+    if (innerWidth <= 880) {
+      const k = 1 - phoneScale;
+      const t = `translate(${Math.round(-150 * k)}px, ${Math.round(-314 * k)}px) rotateX(4deg) rotateY(-8deg) scale(${phoneScale})`;
+      if (t !== phoneStatic) { phoneStatic = t; phoneTilt.style.transform = t; }
+    } else if (r.bottom > -50 && r.top < innerHeight + 50) {
+      phoneStatic = '';
       const p = clamp(-r.top / Math.max(1, r.height - innerHeight), 0, 1);
       tilt.ty = lerp(-16, 12, p) + (reduceMotion ? 0 : tilt.px * 8);
       tilt.tx = 6 - (reduceMotion ? 0 : tilt.py * 5) + Math.sin(p * Math.PI * 4) * 2;
       tilt.x += (tilt.tx - tilt.x) * 0.08; tilt.y += (tilt.ty - tilt.y) * 0.08;
-      const bob = (reduceMotion || innerWidth <= 880) ? 0 : Math.sin(performance.now() / 900) * 4;
+      const bob = reduceMotion ? 0 : Math.sin(performance.now() / 900) * 4;
       const k = 1 - phoneScale;
       phoneTilt.style.transform = `translate(${(-150 * k).toFixed(1)}px, ${(-314 * k + bob).toFixed(1)}px) rotateX(${tilt.x.toFixed(2)}deg) rotateY(${tilt.y.toFixed(2)}deg) scale(${phoneScale})`;
     }
